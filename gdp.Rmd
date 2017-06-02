@@ -1,0 +1,276 @@
+---
+title: "Gender and Diversity Project"
+output: html_document
+---
+```{r warning=FALSE, error=FALSE, message=FALSE}
+options(width=200)
+#################
+## Gender and Diversity Methodology Paper
+## Project: How to Research Gender and Diversity in the IR Curriculum
+## Authors: GCGMKP
+## Data created: 4 February 2017
+## Last Update: 19 May 2017
+#################
+## SYSTEM REQUIREMENTS
+## This script was developed and run under R64.app operating under and OS10.12.5.
+## R version: R 3.4.0
+#################
+
+rm(list=ls())
+
+#Loading libraries
+library(foreign)
+library(Hmisc)
+library(dplyr)
+library(stringr)
+library(ggplot2)
+library(RColorBrewer)
+
+if(Sys.info()["user"]=="gokhan"){pathOUT="~/Dropbox/Projects/GDP/data/outputData";
+pathIN="~/Dropbox/Projects/GDP/data/inputData";pathR="~/Dropbox/Projects/GDP/Rcode";
+pathRep="~/Dropbox/Projects/GDP/Replication";pathM="~/Dropbox/Projects/GDP/manuscript"}
+
+setwd(pathIN)
+
+#Read in data
+gender <- read.csv("gender.csv")
+diversity <- read.csv("diversity.csv")
+convener <- read.csv("convener.csv")
+
+#Filter unique entries (remove duplicates)
+#gender <- unique(gender)
+#diversity <- unique(diversity)
+
+#Subset the gender data
+want.var <- c("Title","Author","Editor","AutGen","EdGen","AutM","AutF","EdM","EdF","Course","Type",
+              "Importance","Year","Publisher")
+want <- which(colnames(gender) %in% want.var)
+gender <- gender[,want]
+
+#Merge the data
+gender <- merge(gender,convener,by="Course",all.x=TRUE)
+want.var <- c("Course","Cluster")
+want <- which(colnames(convener) %in% want.var)
+convener <- convener[,want]
+diversity <- merge(diversity,convener,by="Course")
+
+#Clean up and create new variables
+gender$Code <- substr(gender$Course,3,5) #Extract course code
+gender$Code <- as.integer(gender$Code)
+gender$Level <- cut(gender$Code,
+                  breaks=c(0,400,500,Inf),
+                  labels=c("Undergrad","Masters","PhD")) #Split UG/MA/PhD levels
+gender$Importance[gender$Importance==""] <- NA
+gender$AutGen[gender$AutGen==""] <- NA
+gender$Author[gender$Author==""] <- NA
+gender <- gender[!is.na(gender$Author),]
+gender <- gender[gender$AutF>0 | gender$AutM>0,]
+gender <- gender[gender$Type=="Book" | gender$Type=="Article",] #Subset to books and articles only
+gender$Weighted <- round(gender$AutF/(gender$AutF+gender$AutM),3) #Female involvement adjusted for no. of authors
+gender$Senior <- ifelse(gender$Rank=="Associate" | gender$Rank=="Professor",1,0)
+gender$Senior <- as.factor(gender$Senior)
+
+#Transform variables for logistic regression
+gender$Female <- ifelse(gender$AutF>0,1,0)
+gender$Female <- as.factor(gender$Female)
+
+#Graphs by date of publication
+ggplot(gender[gender$Year>1965 & gender$Year<2017,],aes(x=Year,fill=Female)) +
+  geom_histogram(binwidth=.5,alpha=.5,position="identity") +
+  scale_fill_brewer(palette="Set1") +
+  scale_x_continuous(name="Date of Publication") +
+  scale_y_continuous(name="Times Included in Reading List")
+
+#Frequency of female author publications by year
+hist(gender$Year[gender$Year>1945 & gender$AutF>0])
+
+#Co-authorship statistics
+
+#Female co-authorship preferences
+describe(gender$AutF[gender$AutF>0]) #with other females
+describe(gender$AutM[gender$AutF>0]) #with males
+
+#####Hypotheses Testing#####
+
+#1a Male-Female Inclusion
+t.test(gender$AutM,gender$AutF)
+
+#1b Essential Readings
+essential <- glm(gender$Importance=="Essential"~Female+Type+Year+Level+Convener+Senior,
+                 data=gender,family="binomial")
+summary(essential)
+
+#2 Single-Author
+gender$single.female <- ifelse(gender$AutF==1 & gender$AutM==0,1,0)
+gender$single.male <- ifelse(gender$AutF==0 & gender$AutM==1,1,0)
+gender$Single <- ifelse(gender$single.female==1 | gender$single.male==1,1,0)
+single <- glm(gender$Single~Female+Type+Year+Level+Convener+Senior,
+              data=gender,family="binomial")
+summary(single)
+
+#3 Book
+book <- glm(gender$Type=="Book"~Female+Importance+Year+Level+Convener+Senior,
+                 data=gender,family="binomial")
+summary(book)
+
+#4 Top Journals
+top.j <- c("International Organization","International security","American Political Science Review",
+           "International Studies Quarterly","Foreign Policy Analysis",
+           "European Journal of International Relations",
+           "Journal of Conflict Resolution","World Politics",
+           "Review of international political economy")
+gender$Top <- ifelse(is.element(gender$Title,top.j),1,0)
+gender$Top <- as.factor(gender$Top)
+journal <- glm(Top~Female+Importance+Year+Level+Convener+Senior,
+            data=gender,family="binomial")
+summary(journal)
+
+#5 Top Publishers
+top.uni <- c("Cambridge University Press","Routledge","Oxford University Press","Cornell University Press",
+             "Palgrave Macmillan","The MIT Press","Princeton University Press","Columbia University Press")
+gender$Top.Press <- ifelse(is.element(gender$Publisher,top.uni),1,0)
+gender$Top.Press <- as.factor(gender$Top.Press)
+press <- glm(Top.Press~Female+Importance+Year+Level+Convener+Senior,
+               data=gender,family="binomial")
+summary(press)
+
+#6 First Author in Co-Authored Works
+
+#Two Authors
+gender$two <- ifelse(gender$AutM==1 & gender$AutF==1,1,0)
+describe(gender$AutGen[gender$two==1])
+gender2 <- gender[gender$two==1,]
+gender2$fem <- ifelse(gender2$AutGen=="FM",1,0)
+t.test(gender2$fem==1,gender2$fem==0)
+
+#Three Authors
+gender$three <- ifelse(gender$AutM>0 & gender$AutF>0 & gender$AutM+gender$AutF==3,1,0)
+describe(gender$AutGen[gender$three==1])
+
+gender3 <- gender[gender$three==1,]
+gender3$fem <- ifelse(gender3$AutGen=="FFM" |
+                      gender3$AutGen=="FMF" |
+                      gender3$AutGen=="FMM",1,0)
+t.test(gender3$fem==1,gender3$fem==0)
+
+rm(gender2)
+rm(gender3)
+
+#8 Co-author gender
+gender$female.comale <- ifelse(gender$AutF>0 & gender$AutM>0,1,0)
+gender$female.cofemale <- ifelse(gender$AutF>1 & gender$AutM==0,1,0)
+t.test(gender$female.comale,gender$female.cofemale)
+
+#9 Co-authoring with men vs. single-author
+t.test(gender$female.comale,gender$Single==1 & gender$AutM==0)
+
+#10 Gender studies & #17a Time x Female
+sex <- glm(Sexuality~Type+Importance+Year*Female+Level+Convener,
+          data=diversity,family="binomial",subset=diversity$Year>1945)
+summary(sex)
+
+#12 Male Convener & #13 Junior Faculty & #15 Course Level & #16 Non-Core Courses
+core <- c("100","200","202","203","410","436","450","501","509")
+gender$Core <- ifelse(is.element(gender$Code,core),1,0)
+gender$Core <- as.factor(gender$Core)
+logit.g <- glm(Female~Type+Importance+Year+Level+Convener+Senior+Cluster+Core+Top+Top.Press,
+               data=gender,family="binomial")
+summary(logit.g)
+```
+```{r}
+options(width=80)
+#Convert odds to percentages
+odds.g <- round(exp(logit.g$coefficients),2)-1
+odds.g #these mean "times more likely", i.e. 0 equals no effect, 1 means 100% more likely, -1 100% less
+```
+```{r warning=FALSE, error=FALSE, message=FALSE}
+#17 Temporal Patterns
+ols.time <- lm(Year~Female+Type+Importance+Year+Level+Convener+Rank+Cluster+Single+Top+Top.Press,
+               data=gender)
+summary(ols.time)
+
+#5 & #14 Publisher Tables and Yearly Inclusion
+library(plyr)
+gender$Female <- as.integer(gender$Female)-1
+pub <- ddply(gender, .(Publisher), summarize, Total=length(Publisher), Female=sum(Female))
+pub$Ratio <- round((pub$Female)/(pub$Total),2)
+pub <- pub[pub$Total>9 & pub$Total<1000,] #Require a minimum of ten items
+
+options(DT.options=list(pageLength=10,language=list(search='Filter:')))
+DT::datatable(pub,caption="Table 1: Publisher Gender Breakdown (Minimum 10 Works)",options=list(
+  order=list(list(4,'desc'))
+))
+
+detach(package:plyr)
+
+gender$male.comale <- ifelse(gender$AutM>1 & gender$AutF==0,1,0)
+gender$male.cofemale <- ifelse(gender$AutM>0 & gender$AutF>0,1,0)
+gender$Male <- ifelse(gender$Female==0,1,0)
+gender$book <- ifelse(gender$Type=="Book",1,0)
+gender$article <- ifelse(gender$book==1,0,1)
+
+yearly <- gender %>% group_by(Year) %>% 
+            summarise(Readings=length(Publisher),#total.female=sum(Female),total.male=sum(Male),
+            Female=sum(AutF),Male=sum(AutM),
+            SA=sum(Single),SA.F=sum(single.female),SA.M=sum(single.male),
+            FM=sum(female.comale),FF=sum(female.cofemale),
+            MM=sum(male.comale),
+            Weighted=sum(Weighted))
+yearly$FM.Ratio <- round(yearly$Female/(yearly$Female+yearly$Male),3)
+yearly$FM.Weighted <- round(yearly$Weighted/yearly$Readings,3)
+yearly$Weighted <- NULL
+yearly$Year[yearly$Year==""] <- NA
+
+library(dygraphs)
+authors <- cbind(yearly$Year,yearly$FM.Weighted)
+authors <- authors[1:99,]
+authors <- as.data.frame(authors)
+authors$V1 <- paste(authors$V1,"-01-01",sep="")
+authors$V1 <- as.Date(authors$V1)
+authors$V3 <- 1-authors$V2
+#authors <- authors[authors$V3<1,]
+authors <- as.matrix(authors)
+rownames(authors) = authors[,1]
+authors <- authors[,2:3]
+authors <- authors[43:99,]
+dygraph(authors,main = "Reading List Inclusion Rates over Time") %>%
+  dyOptions(fillGraph = TRUE, fillAlpha = 0.1) %>%
+  dyLimit(.2, color = "red") %>%
+  dyLegend(width = 400) %>%
+  dyAxis("y", label = "Percentage of All Readings",valueRange = c(0,1.001)) %>%
+  dyAxis("x", label = "Date of Publication") %>%
+  dySeries("V2", label = "Female Inclusion") %>%
+  dySeries("V3", label = "Male Inclusion")
+```
+```{r}
+options(DT.options=list(pageLength=10,language=list(search='Filter:')))
+DT::datatable(yearly,caption="Table 2: Yearly Breakdowns,
+              Gender/Single-Author/Co-Authored/Binary and Percentage Gender Ratio",
+              rownames=FALSE,options = list(
+  order = list(list(0, 'desc'))
+))
+
+course <- gender %>% group_by(Code) %>% 
+            summarise(Readings=length(Publisher),
+            Female=sum(AutF),Male=sum(AutM),
+            Book=sum(book),Article=sum(article),
+            Weighted=sum(Weighted))
+course$BA.Ratio <- round(course$Book/course$Readings,2)
+course$FM.Ratio <- round(course$Female/(course$Female+course$Male),3)
+course$FM.Weighted <- round(course$Weighted/course$Readings,3)
+course$Weighted <- NULL
+course$Code <- paste("IR",course$Code,sep="")
+```
+```{r}
+DT::datatable(course,caption="Table 3: Course Breakdown by Book/Article and Gender",rownames=FALSE,options=list(
+  order=list(list(7,'desc'))
+))
+```
+```{r}
+library(rbokeh)
+n <- nrow(gender)
+ramp <- colorRampPalette(c("red", "blue"))(n)
+figure() %>%
+  ly_points(Year,AutF,data=gender[gender$Year>1965,], color = ramp, size = Weighted,
+            hover=c(Year,AutF))
+```
