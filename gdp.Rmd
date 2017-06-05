@@ -1,20 +1,9 @@
 ---
 title: "Gender and Diversity Project"
+author: "Gokhan Ciflikli"
 output: html_document
 ---
-```{r warning=FALSE, error=FALSE, message=FALSE}
-options(width=200)
-#################
-## Gender and Diversity Methodology Paper
-## Project: How to Research Gender and Diversity in the IR Curriculum
-## Authors: GCGMKP
-## Data created: 4 February 2017
-## Last Update: 19 May 2017
-#################
-## SYSTEM REQUIREMENTS
-## This script was developed and run under R64.app operating under and OS10.12.5.
-## R version: R 3.4.0
-#################
+```{r warning=FALSE, error=FALSE, message=FALSE, echo=FALSE}
 
 rm(list=ls())
 
@@ -73,7 +62,9 @@ gender$Senior <- as.factor(gender$Senior)
 #Transform variables for logistic regression
 gender$Female <- ifelse(gender$AutF>0,1,0)
 gender$Female <- as.factor(gender$Female)
+```
 
+```{r warning=FALSE, error=FALSE, message=FALSE, echo=FALSE}
 #Graphs by date of publication
 ggplot(gender[gender$Year>1965 & gender$Year<2017,],aes(x=Year,fill=Female)) +
   geom_histogram(binwidth=.5,alpha=.5,position="identity") +
@@ -89,7 +80,9 @@ hist(gender$Year[gender$Year>1945 & gender$AutF>0])
 #Female co-authorship preferences
 describe(gender$AutF[gender$AutF>0]) #with other females
 describe(gender$AutM[gender$AutF>0]) #with males
+```
 
+```{r warning=FALSE, error=FALSE, message=FALSE}
 #####Hypotheses Testing#####
 
 #1a Male-Female Inclusion
@@ -173,7 +166,10 @@ summary(sex)
 core <- c("100","200","202","203","410","436","450","501","509")
 gender$Core <- ifelse(is.element(gender$Code,core),1,0)
 gender$Core <- as.factor(gender$Core)
-logit.g <- glm(Female~Type+Importance+Year+Level+Convener+Senior+Cluster+Core+Top+Top.Press,
+#gender$Name <- as.character(gender$Name)
+gender$Self <- mapply(function(x,y) all(x %in% y), 
+                     str_extract_all(gender$Author,"\\w+"),str_extract_all(gender$Name,"\\w+"))
+logit.g <- glm(Female~Type+Importance+Year+Level+Convener+Senior+Cluster+Core+Top+Top.Press+Self,
                data=gender,family="binomial")
 summary(logit.g)
 ```
@@ -185,10 +181,12 @@ odds.g #these mean "times more likely", i.e. 0 equals no effect, 1 means 100% mo
 ```
 ```{r warning=FALSE, error=FALSE, message=FALSE}
 #17 Temporal Patterns
-ols.time <- lm(Year~Female+Type+Importance+Year+Level+Convener+Rank+Cluster+Single+Top+Top.Press,
+ols.time <- lm(Year~Female+Type+Importance+Year+Level+Convener+Senior+Single+Top+Top.Press+Self,
                data=gender)
 summary(ols.time)
+```
 
+```{r warning=FALSE, error=FALSE, message=FALSE, echo=FALSE}
 #5 & #14 Publisher Tables and Yearly Inclusion
 library(plyr)
 gender$Female <- as.integer(gender$Female)-1
@@ -242,7 +240,7 @@ dygraph(authors,main = "Reading List Inclusion Rates over Time") %>%
   dySeries("V2", label = "Female Inclusion") %>%
   dySeries("V3", label = "Male Inclusion")
 ```
-```{r}
+```{r echo=FALSE}
 options(DT.options=list(pageLength=10,language=list(search='Filter:')))
 DT::datatable(yearly,caption="Table 2: Yearly Breakdowns,
               Gender/Single-Author/Co-Authored/Binary and Percentage Gender Ratio",
@@ -261,16 +259,8 @@ course$FM.Weighted <- round(course$Weighted/course$Readings,3)
 course$Weighted <- NULL
 course$Code <- paste("IR",course$Code,sep="")
 ```
-```{r}
+```{r echo=FALSE}
 DT::datatable(course,caption="Table 3: Course Breakdown by Book/Article and Gender",rownames=FALSE,options=list(
   order=list(list(7,'desc'))
 ))
-```
-```{r}
-library(rbokeh)
-n <- nrow(gender)
-ramp <- colorRampPalette(c("red", "blue"))(n)
-figure() %>%
-  ly_points(Year,AutF,data=gender[gender$Year>1965,], color = ramp, size = Weighted,
-            hover=c(Year,AutF))
 ```

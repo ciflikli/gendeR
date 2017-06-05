@@ -18,7 +18,7 @@ library(Hmisc)
 library(dplyr)
 library(stringr)
 library(ggplot2)
-library(stargazer)
+#library(stargazer)
 library(RColorBrewer)
 
 if(Sys.info()["user"]=="gokhan"){pathOUT="~/Dropbox/Projects/GDP/data/outputData";
@@ -85,7 +85,9 @@ ggplot(gender[gender$Year>1965 & gender$Year<2017,],aes(x=Year,fill=Female)) +
 #  scale_fill_brewer(name="Number of Female Editors",palette="Set1")
 
 #Frequency of female author publications by year
-hist(gender$Year[gender$Year>1945 & gender$AutF>0])
+ggplot(gender[gender$Year>1945 & gender$AutF>0,],aes(x=Year)) +
+  geom_histogram(binwidth=1,alpha=.5,position="identity") +
+  scale_fill_brewer(palette="Set1")
 
 #Summary statistics by course, distribution of female authors
 tapply(gender$AutF,gender$Course,describe) #n=total number of works,distribution for females only
@@ -250,11 +252,14 @@ race <- glm(Race~Type+Importance+Year+Female+Level+Convener+Rank+Cluster,
            data=diversity,family="binomial",subset=diversity$Year>1945)
 summary(race)
 
-#12 Male Convener & 13 Junior Faculty & 15 Course Level & 16 Non-Core Courses
+#12 Male Convener & 13 Junior Faculty & 15 Course Level & 16 Non-Core Courses & Self-Cite
 core <- c("100","200","202","203","410","436","450","501","509")
-gender$core <- ifelse(is.element(gender$Code,core),1,0)
-gender$core <- as.factor(gender$core)
-logit.g <- glm(Female~Type+Importance+Year+Level+Convener+Rank+Cluster+core+top+top.press,
+gender$Core <- ifelse(is.element(gender$Code,core),1,0)
+gender$Core <- as.factor(gender$Core)
+gender$Name <- as.character(gender$Name)
+gender$Self <- mapply(function(x,y) all(x %in% y), 
+                     str_extract_all(gender$Author,"\\w+"),str_extract_all(gender$Name,"\\w+"))
+logit.g <- glm(Female~Type+Importance+Year+Level+Convener+Rank+Core+top+top.press+Self,
                data=gender,family="binomial")
 summary(logit.g)
 
@@ -263,7 +268,7 @@ odds.g <- round(exp(logit.g$coefficients),2)-1
 odds.g #these mean "times more likely", i.e. 0 equals no effect, 1 means 100% more likely, -1 100% less
 
 #17 Temporal Patterns
-ols.time <- lm(Year~Female+Type+Importance+Year+Level+Convener+Rank+Cluster+single+top+top.press,
+ols.time <- lm(Year~Female+Type+Importance+Year+Level+Convener+Rank+single+top+top.press,
                data=gender)
 summary(ols.time)
 
