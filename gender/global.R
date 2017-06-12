@@ -7,6 +7,7 @@ library(tidyverse)
 library(RColorBrewer)
 library(rbokeh)
 library(stringr)
+library(mosaic)
 
 total <- read_csv("total.csv")
 gender <- read_csv("gender_sb.csv")
@@ -32,25 +33,42 @@ course <- read_csv("course.csv")
 # 
 # course <- cbind(course, course1[,2:6])
 
-regexp <- "[[:digit:]]+" 
-course$xcor <- ntiles(course$Ratio, 6)
-course$xcor <- str_extract(course$xcor, regexp)
-course$ycor <- ntiles(course$Code, 18)
-course$ycor <- str_extract(course$ycor, regexp)
+#regexp <- "[[:digit:]]+" 
+#course$xcor <- ntiles(course$Ratio, 6)
+#course$xcor <- str_extract(course$xcor, regexp)
+#course$ycor <- ntiles(course$Code, 18)
+#course$ycor <- str_extract(course$ycor, regexp)
 
-#course$xcor <- c(1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 5, 6, 7, 7, 7,
-#                 8, 8, 8, 9, 9, 9, 9, 10, 10, 10, 10, 11, 11, 11, 12, 12, 12, 13, 13)
-#course$ycor <- c(2, 3, 2, 4, 5, 6, 4, 1, 2, 5, 1, 2, 3, 6, 1, 4, 2, 5, 3, 1, 2, 3, 
-#                 1, 2, 4, 4, 2, 3, 6, 5, 3, 2, 5, 2, 3, 6, 4, 3, 4, 5, 6, 5, 1)
+course$xcor <- c(1, 1, 2, 2, 2, 2, 3, 3, 3, 3,
+                 4, 4, 4, 4, 5, 5, 5, 5, 6, 6,
+                 6, 7, 7, 7, 7, 8, 8, 8, 9, 9,
+                 9, 9, 10, 11, 10, 10, 11, 11, 12, 12,
+                 12, 13, 13)
+course$ycor <- c(2, 3, 2, 4, 3, 1, 4, 1, 2, 5,
+                 1, 2, 3, 5, 1, 3, 2, 4, 3, 2,
+                 5, 4, 1, 2, 5, 2, 4, 1, 2, 5,
+                 4, 3, 1, 1, 4, 3, 5, 4, 2, 3,
+                 4, 3, 5)
+course$xcor <- as.character(course$xcor)
+course$ycor <- as.character(course$ycor)
 
 clusters <- c("Theory", "Security/Statecraft", "IO/Law", "IPE", "Regional")
-colors <- c("#a6cee3", "#1f78b4", "#fdbf6f", "#b2df8a", "#33a02c")
+colors <- c('#f0f9e8','#bae4bc','#7bccc4','#43a2ca','#0868ac')
 course$color <- colors[match(course$Cluster, clusters)]
 
-course$symx <- paste(course$ycor, ":0.1", sep = "")
-course$numbery <- paste(course$xcor, ":0.8", sep = "")
-course$massy <- paste(course$xcor, ":0.15", sep = "")
-course$namey <- paste(course$xcor, ":0.3", sep = "")
+course$symx <- paste(course$xcor, ":0.1", sep = "")
+course$numbery <- paste(course$ycor, ":0.8", sep = "")
+course$massy <- paste(course$ycor, ":0.15", sep = "")
+course$namey <- paste(course$ycor, ":0.3", sep = "")
+course$symx2 <- paste(course$xcor, ":0.7", sep = "")
+
+course$Core <- ifelse(course$Core==1, "Core", "")
+course <- course %>% 
+unite(Convener, Rank, Convener, sep = "/")
+course$Ratio <- format(round(course$Ratio, 2), nsmall = 2)
+course$WRatio <- format(round(course$WRatio, 2), nsmall = 2)
+course$Code <- paste0("IR",course$Code)
+course$Level <- ifelse(course$Level=="Undergrad", "Undergraduate", course$Level)
 
 pub$Female <- abs(pub$Female)
 pub$Female <- pub$Total - pub$Female
