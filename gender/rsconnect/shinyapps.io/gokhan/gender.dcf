@@ -1,0 +1,11 @@
+name: gender
+title: gender
+account: gokhan
+server: shinyapps.io
+appId: 188187
+bundleId: 862681
+url: https://gokhan.shinyapps.io/gender/
+when: 1497241881.3834
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: convener.csv|gender.csv|www/501.png|www/hover.png

@@ -39,16 +39,16 @@ course <- read_csv("course.csv")
 #course$ycor <- ntiles(course$Code, 18)
 #course$ycor <- str_extract(course$ycor, regexp)
 
-course$xcor <- c(1, 1, 2, 2, 2, 2, 3, 3, 3, 3,
-                 4, 4, 4, 4, 5, 5, 5, 5, 6, 6,
-                 6, 7, 7, 7, 7, 8, 8, 8, 9, 9,
+course$xcor <- c(0, 1, 2, 1, 2, 2, 3, 3, 3, 4,
+                 4, 4, 4, 5, 5, 5, 5, 5, 6, 6,
+                 6, 7, 7, 7, 7, 7, 8, 8, 9, 9,
                  9, 9, 10, 11, 10, 10, 11, 11, 12, 12,
                  12, 13, 13)
-course$ycor <- c(2, 3, 2, 4, 3, 1, 4, 1, 2, 5,
+course$ycor <- c(2, 2, 2, 4, 4, 1, 3, 1, 2, 5,
                  1, 2, 3, 5, 1, 3, 2, 4, 3, 2,
-                 5, 4, 1, 2, 5, 2, 4, 1, 2, 5,
-                 4, 3, 1, 1, 4, 3, 5, 4, 2, 3,
-                 4, 3, 5)
+                 5, 4, 1, 2, 5, 3, 3, 1, 2, 5,
+                 4, 3, 1, 1, 4, 3, 5, 3, 2, 3,
+                 4, 4, 5)
 course$xcor <- as.character(course$xcor)
 course$ycor <- as.character(course$ycor)
 
@@ -69,6 +69,7 @@ course$Ratio <- format(round(course$Ratio, 2), nsmall = 2)
 course$WRatio <- format(round(course$WRatio, 2), nsmall = 2)
 course$Code <- paste0("IR",course$Code)
 course$Level <- ifelse(course$Level=="Undergrad", "Undergraduate", course$Level)
+course$Readings <- course$Total
 
 pub$Female <- abs(pub$Female)
 pub$Female <- pub$Total - pub$Female
