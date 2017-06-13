@@ -1,5 +1,5 @@
 # gender
 
-LSE Gender &amp; Project
+LSE Gender Project
 
 https://gokhan.shinyapps.io/gender/
