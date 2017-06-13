@@ -9,18 +9,11 @@ library(tidyverse)
 library(RColorBrewer)
 library(rbokeh)
 library(stringr)
-library(mosaic)
 library(shinyjs)
 library(bubbles)
-<<<<<<< HEAD
-<<<<<<< HEAD
 
 
 ######Read-in data
-=======
->>>>>>> 69606c91360ba8703c3dc5da675528354d8923c7
-=======
->>>>>>> 69606c91360ba8703c3dc5da675528354d8923c7
 
 total <- read_csv("total.csv")
 gender <- read_csv("gender_sb.csv")
@@ -95,14 +88,8 @@ gender$Decade <- ifelse(gender$Year > 1959 & gender$Year < 1970,1960,
                                       ifelse(gender$Year > 1989 & gender$Year < 2000,1990,
                                              ifelse(gender$Year > 1999 & gender$Year < 2010,2000,2010)))))
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 ######Create Co-Author data
 
-=======
->>>>>>> 69606c91360ba8703c3dc5da675528354d8923c7
-=======
->>>>>>> 69606c91360ba8703c3dc5da675528354d8923c7
 dat2 <- gender %>%
   group_by(AutGen) %>%
   summarise(n = n())
@@ -110,30 +97,18 @@ dat2$Male <- str_count(dat2$AutGen, "M")
 dat2$Female <- str_count(dat2$AutGen, "F")
 dat2$Total <- str_length(dat2$AutGen)
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 ######Create sunburstR data
 
 #Create summaries
 
-=======
->>>>>>> 69606c91360ba8703c3dc5da675528354d8923c7
-=======
->>>>>>> 69606c91360ba8703c3dc5da675528354d8923c7
 test <- gender[gender$Female==1, ] %>%
   group_by_(.dots=c("Decade", "Type", "topp", "Single", "female.cofemale")) %>%
   summarise(n = n())
 
 test <- na.omit(test)
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 #Provide user-friendly names
 
-=======
->>>>>>> 69606c91360ba8703c3dc5da675528354d8923c7
-=======
->>>>>>> 69606c91360ba8703c3dc5da675528354d8923c7
 test$topp <- ifelse(test$topp == 1 ,"TopPublisher", "Other")
 test$Single <- ifelse(test$Single == 1,"SingleAuthored", "CoAuthored")
 test$female.cofemale <- ifelse(test$female.cofemale == 1, "FemaleCoAuthor",
@@ -141,8 +116,6 @@ test$female.cofemale <- ifelse(test$female.cofemale == 1, "FemaleCoAuthor",
 )
 colnames(test)[c(3,5)] <- c("Top", "Coauthor")
 test$Coauthor <- ifelse(test$Single=="SingleAuthored", "", test$Coauthor)
-<<<<<<< HEAD
-<<<<<<< HEAD
 
 #Create sequence data
 #Paste strings and add '-' in between
@@ -152,10 +125,6 @@ test <- within(test, Path <- paste(Decade, Type, Top, Single, Coauthor, sep = "-
 #Remove the last '-' for sequences ending with SingleAuthored
 
 test$Path <- ifelse(test$Coauthor == "", substr(test$Path, 1, nchar(test$Path) - 1), test$Path)
-=======
->>>>>>> 69606c91360ba8703c3dc5da675528354d8923c7
-=======
->>>>>>> 69606c91360ba8703c3dc5da675528354d8923c7
 
 #Subset the end product and reorder
 
