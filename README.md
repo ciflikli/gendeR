@@ -1,2 +1,5 @@
 # gender
-LSE Gender &amp; Diversity Project
+
+LSE Gender Project
+
+https://gokhan.shinyapps.io/gender/
