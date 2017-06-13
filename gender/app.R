@@ -2,12 +2,14 @@ source("global.R", local = TRUE)
 
 sidebar <- dashboardSidebar(
   sidebarMenu(
-    menuItem("Introduction", icon = icon("venus"),  tabName = "intro"),
-    menuItem("Charts", icon = icon("pie-chart"), startExpanded = TRUE, tabName = "charts",
-             menuSubItem("Female Inclusion", tabName = "female"),
-             menuSubItem("Institutional Breakdown", tabName = "course")
-    ),
+    menuItem("Introduction", icon = icon("play-circle"),  tabName = "intro"),
     menuItem("Time Series", icon = icon("area-chart"), tabName = "ts"
+    ),
+    menuItem("Analysis", icon = icon("superscript"), startExpanded = TRUE, tabName = "charts",
+             menuSubItem("Female Inclusion", icon = icon("pie-chart"), tabName = "female"),
+             menuSubItem("Course Breakdown", icon = icon("table"), tabName = "course"),
+             menuSubItem("Logistic Regression", icon = icon("console", lib = "glyphicon"), tabName = "logit"),
+             menuSubItem("Co-Authorship", icon = icon("users"), tabName = "coauthor")
     ),
     menuItem("Publisher Data", icon = icon("book"), tabName = "data"
     ),
@@ -56,53 +58,114 @@ body <- dashboardBody(includeCSS("styles.css"),
                 )
             ),
     tabItem(tabName = "female",
+            fluidPage(fluidRow(column(12,
             h2("Pathways to Female Author Inclusion"),
             h3("Which sets of conditions are more conducive?"),
-            fluidRow(sunburstOutput(outputId = "sb", height = 550)),
-            h5("Sequence: Decade > Article/Book > Top/Other Publisher > Single/Co-Authored > Female/Male Co-Author")
+            p("Hover on the dial starting from the innermost circle to find out reading list inclusion trends over decades."),
+            fluidRow(sunburstOutput(outputId = "sb", height = 550)), br(),
+            p("Sequence: Decade > Article/Book > Top/Other Publisher > Single/Co-Authored > Female/Male Co-Author"))))
             ),
     tabItem(tabName = "course",
             fluidPage(fluidRow(
-             h2("Female Author Ratio Breakdown by Cluster"),
+             h2("Female Author Ratio Breakdown by Cluster", img(src = "key.png", height = 42, width = 250)),
                rbokehOutput(outputId = "plot1", width = "200%")),
              fluidRow(column(2,
              br(),
              h4("Legend"),
              br(),
                img(src = "avatar.png", height = 83, width = 100)),
-                      column(10, br(), br(), br(),
+                      column(5, br(), br(), br(),
                              h5("Core: LSE core course indicator"),
                              h5("Ratio: Reading List Female Author Ratio"),
                              h5("Code: LSE Course Code"),
-                             h5("Cluster: Theory, Security/Statecraft, IO/Law, IPE, Regional (Colour-coded)"),
+                             h5("Cluster: Theory, Security/Statecraft, IO/Law, IPE, Regional"),
                              h5("Level: Undergraduate, Masters, PhD"),
                              h5("Hover over course boxes for additional information.")
-                                 ))
+                                 ),
+             column(5, br(), h4("Overall F/M Ratio 0.19"), br(), img(src = "legend.png", height = 83, width = 326)))
              )),
+    tabItem(tabName = "logit",
+            fluidPage(fluidRow(
+              h2("Logistic Function"),
+              fluidRow(column(12,
+                              plotOutput("glmplot", height = 400))), br(),
+              fluidRow(column(4,
+                              p("First slider creates a new dummy variable which is set to 0 if it is not met (miss) in a calendar year and 1 (hit) otherwise.
+                                The second slider selects the starting year for the data. For example, the default settings produce a logistic link function
+                                showing which years had at least", span("20%", style = "color:#468cc8"), "female authors since ", span("1900.", style = "color:#468cc8"))),
+              fluidRow(column(4,
+                     sliderInput("glmratio", "Select Female Author Percentage:", step = 1, min = 0, max = 40, value = 20)),
+              fluidRow(column(4,
+                     sliderInput("glmyear", "Select Starting Year:", step = 1, min = 1800, max = 2000, value = 1900, sep = ""))))
+                )))
+            ),
+    tabItem(tabName = "coauthor",
+            fluidPage(fluidRow(
+              h2("Co-Authorship Patterns"),
+              p("Explore co-authorship preferences by setting different constraints on author gender and/or total number of authors.
+                The play button under the sliders animates the graph by increasing the selected value by one until it reaches its maximum.
+                The first slider creates a subset based on the value range: The default '2-3' only shows works featuring either 2 or 3 authors,
+                which excludes single-authored pieces by authors from both genders. Using the other sliders, all gender combinations can be analysed.
+                As coding conserved the first-last author sequence, 'FM' is qualitatively different than 'MF'."),
+              fluidRow(column(4,
+                              sliderInput("max", "Select Maximum Number of Total Authors:",
+                                          step = 1, min = 1, max = 6, value = c(2, 3), animate = TRUE)),
+              fluidRow(column(4,
+                              sliderInput("female", "Select Maximum Number of Female Authors:",
+                                          step = 1, min = 0, max = 3, value = 3, animate = TRUE)),
+              fluidRow(column(4,
+                              sliderInput("male", "Select Maximum Number of Male Authors:",
+                                          step = 1, min = 0, max = 5, value = 5, animate = TRUE)
+                              )))
+              ),
+              fluidRow(column(4,
+                              valueBoxOutput("total", width = NULL)),
+              fluidRow(column(4,
+                              valueBoxOutput("male", width = NULL)),
+              fluidRow(column(4,
+                              valueBoxOutput("female", width = NULL)
+                              )))
+              ),
+              fluidRow(column(12,
+                              bubblesOutput("bubbles", width = "100%", height = 600)))
+              ))),                
     tabItem(tabName = "ts",
-             h2("Yearly Time Series Graph"),
-             fluidRow(dygraphOutput(outputId = "ts")),
-             fluidRow(br(),
-               p("* Data only accurate down to individual years (even when you can zoom to monthly view).")
-             )
+            fluidPage(
+             fluidRow(column(12,
+               h2("Yearly Author Gender Ratios"), br(),
+               dygraphOutput(outputId = "ts")),
+             fluidRow(column(12, br(),
+               p("This interactive time series analogue of the introduction plot shows reading list breakdown based on gender.
+                 Female-to-male author ratio, based on their inclusion in LSE IR reading lists, rarely hits 20% in a given publication year.
+                 This finding is in line with that of ",
+                 a("Colgan (2017).", href = "https://docs.google.com/viewer?a=v&pid=sites&srcid=ZGVmYXVsdGRvbWFpbnxqZWZmZGNvbGdhbnxneDo3NjRkNGMyODZkNDFiMTI4"),
+                 "Refer to the methodology tab to read about how this study was conducted.",
+                 br(), br(),
+                 "* Note that the data are only accurate down to individual years, even when zoomed to monthly view.")
+             ))))
             ),
     tabItem(tabName = "data",
             fluidPage(fluidRow(column(12,
             h2("Gender Breakdown by Publisher"),
             fluidRow(DT::dataTableOutput(outputId = "pubtable")))),
-            fluidRow(column(3,
+            fluidRow(column(4,
+                            sliderInput("female2", "Minimum Female Inclusion Ratio %",
+                                        step = 5, min = 0, max = 50, value = 0)),
+            fluidRow(column(4,
             sliderInput("threshold2", "Minimum Number of Total Publications",
                         step = 10, min = 10, max = 100, value = 100)),
-               fluidRow(column(3,
-               sliderInput("female2", "Minimum Female Inclusion Ratio Percentage",
-                        step = 5, min = 0, max = 50, value = 0))))
-            )),
+            fluidRow(column(4, br(),
+            p("Play around with the sliders to filter publishers. Notice that as publishers get more 'prestigious'
+            (i.e. higher number of total publications included), their F/M ratio goes down."))))
+            ))),
     tabItem(tabName = "methods",
-       h2("Methodology"), fluidPage(column(6,
-       p("The dataset is based on an export of Moodle data containing syllabi for each undergraduate,
+       fluidPage(column(6,
+       h2("Methodology"),
+       p("The dataset is based on an export of", a("Moodle", href = "http://www.lse.ac.uk/internationalRelations/aboutthedepartment/forstudents/moodle.aspx"), 
+       "data containing syllabi for each undergraduate,
        master's and PhD level IR course on offer at the LSE in the 2015-16 academic year. A total of 43
        courses (18 undergraduate-level, 23 master's-level, and 2 PhD-level)
-       render 13,589 non-unique (2,574 by female authors) textual sources listed as both essential and background reading material.
+       render 12,354 non-unique (2,570 by female authors) textual sources listed as both essential and background reading material.
        The analysis focuses on books and articles published between 1960 and 2015. Finally, 
        in order to tackle the gender bias issue as it relates to authorship in academia,
        sex of the author(s) are coded M/F*. In case of multiple authors, the binary coding indicates
@@ -113,16 +176,18 @@ body <- dashboardBody(includeCSS("styles.css"),
        ))
        ),
     tabItem(tabName = "project",
-       h2("Project Details"), fluidPage(column(6,
+       fluidPage(column(6,
+        h2("Project Details"), 
         p("This data presentation is one component of a larger gender and diversity project that is run at the LSE International Relations Department.
           Currently, two working papers are being written:"), br(),
         p("For methodology, see", em("'How to Research Gender & Diversity in the IR Curriculum: A Convergent Mixed-Methods Approach'"),
           "by Kiran Phull, Gokhan Ciflikli & Gustav Meibauer."), br(),
         p("For theory, see", em("'Is Your Syllabus Biased?: Analyzing Gender and Diversity in the IR Canon'"),
-          "by Dr. Joanne Yao and Andrew Delatolla."), br(),
+          "by Dr. Joanne Yao and Andrew Delatolla. Read guest", a("blogpost.",
+          href = "https://thedisorderofthings.com/2017/04/20/gender-and-diversity-in-the-ir-curriculum-why-should-we-care/")),
         p("This Shiny app is built in R, utilising packages such as"),
-        code("shinydashboard, dygraphs, sunburstR, DT, htmlwidgets, and rbokeh"), br(), br(),
-        p("Data and code used for generating this app will be made publicly available after publication."))
+        code("shinydashboard, shinyjs, dygraphs, sunburstR, DT, htmlwidgets, RColorBrewer, bubbles, rbokeh"), br(), br(),
+        p("Data and code used for generating this app will be made publicly available on GitHub after publication."))
             ))
  )
 )
@@ -130,7 +195,20 @@ body <- dashboardBody(includeCSS("styles.css"),
 ui <- dashboardPage(skin = "red",
       dashboardHeader(title = "LSE IR Gender Project"),
       dashboardSidebar(sidebar, width = "250px"),
-      dashboardBody(body, tags$head(tags$style(HTML("
+      dashboardBody(body, useShinyjs(), tags$head(tags$style(HTML("
+                                                  .skin-red .main-header .logo {
+                                                   background-color: #db4c3f;
+                                                   }
+                                                   .skin-red .main-header .logo:hover {
+                                                   background-color: #db4c3f;
+                                                   }
+                                                   .skin-red .main-header .navbar .sidebar-toggle:hover {
+                                                   background-color: #db4c3f;
+                                                   }
+                                                   .skin-red .main-header .navbar .sidebar-toggle:hover {
+                                                   color: #FFFFFF;
+                                                   background: rgba(0,0,0,0);
+                                                   }
                                                    .main-sidebar, .left-side {
                                                    width: 250px;
                                                    }
@@ -168,21 +246,15 @@ ui <- dashboardPage(skin = "red",
                                                    -o-transform: translate(-250px, 0);
                                                    transform: translate(-250px, 0);
                                                    }
-                                                   }
-                                                   .js-irs-0 .irs-bar {
-                                                   border-top-color: #db4c3f;
-                                                   border-bottom-color: #db4c3f;
-                                                   } 
-                                                   .js-irs-0 .irs-bar-edge {
-                                                   border-color: #db4c3f;
-                                                   }
-                                                   .js-irs-0 .irs-single, .js-irs-0 .irs-bar-edge, .js-irs-0 .irs-bar {
-                                                   background: #db4c3f;
-                                                   }
                                                    }"))))
       )
 
 server <- function(input, output) {
+  
+  runjs('
+        var el2 = document.querySelector(".skin-red");
+        el2.className = "skin-red sidebar-mini";
+        ')
   
   selectedData <- reactive({
   pub <- pub[pub$Total >= input$threshold2 & pub$Ratio >= (input$female2 / 100), ]
@@ -190,18 +262,71 @@ server <- function(input, output) {
   
   ranges2 <- reactiveValues(x = NULL, y = NULL)
   
+  gender$Female <- as.numeric(gender$Female) - 1
+  gender2 <- gender %>%
+    group_by(Year) %>%
+    summarise(n = n(), Avg = sum(Female))
+  
+  plotData <- reactive({
+    gender2$Avg2 <- ifelse(gender2$Avg / gender2$n >= input$glmratio/100, 1, 0)
+    gender2 <- gender2[gender2$Year >= input$glmyear, ] 
+    gender2 
+  })
+  
+  dat3 <- reactive({
+  dat2 <- dat2[dat2$Total >= input$max[1] & dat2$Total <= input$max[2] & dat2$Male <= input$male & dat2$Female <= input$female, ]
+  })
+  
+  output$total <- renderValueBox({
+    valueBox(
+      value = nrow(dat3()),
+      subtitle = "Unique author combinations",
+      icon = icon("users"), color = "light-blue"
+    )
+  })
+  
+  output$male <- renderValueBox({
+    valueBox(
+      value = sum(dat3()$n),
+      subtitle = "Total number of readings in this batch",
+      icon = icon("book"), color = "light-blue"
+    )
+  })
+  
+  output$female <- renderValueBox({
+    valueBox(
+      value = sum(dat3()$n[dat3()$Female > 0]),
+      subtitle = "Readings featuring at least one female",
+      icon = icon("venus"), color = "light-blue"
+    )
+  })
+  
+  output$bubbles <- renderBubbles({
+    if (nrow(dat3()) == 0)
+      return()
+    bubbles(sqrt(dat3()$n), dat3()$AutGen, key = dat3()$AutGen, tooltip = dat3()$n, color = "#222d32", textColor = "white")
+})
+  
+  output$glmplot <- renderPlot({
+                             r <- ggplot(plotData(), aes(x = Year, y = Avg2)) + geom_point() +
+                             stat_smooth(method = "glm", method.args = list(family = "binomial"), se = TRUE) +
+                             scale_y_continuous(name = "Selected Female Author Ratio Hit/Missed", labels = c("Miss", "Hit"), breaks = c(0, 1)) +
+                             scale_x_continuous(name= "Date of Publication")
+   r
+  })
+  
   output$plot1 <- renderRbokeh({
-      figure(title = "LSE IR Courses: Top rows indicate higher F/M ratio", tools = c("pan", "box_zoom", "wheel_zoom", "reset", "hover"),
+      figure(title = "LSE IR Courses 2015-2016",
+                tools = c("pan", "box_zoom", "wheel_zoom", "reset", "hover"),
                 ylim = as.character(1:5),
                 xlim = as.character(0:13), 
                 xgrid = FALSE, ygrid = FALSE, xaxes = FALSE, yaxes = FALSE,
                 ylab = "F/M Ratio", xlab = "IR Course Level",
                 height = 1200, width = 3450,
                 toolbar_location = "above", h_symmetry = TRUE, v_symmetry = TRUE) %>%
-      # plot rectangles
       ly_crect(xcor, ycor, data = course, width = .95, height = .95,
                fill_color = color, line_color = "#252525", fill_alpha = .6,
-               hover = list(Course, Convener, Readings)) %>%
+               hover = list(Code, Course, Convener, Readings)) %>%
       ly_text(symx, ycor, text = Code, data = course, 
               font_style = "bold", font_size = "14pt",
               align = "left", baseline = "middle") %>%
@@ -213,7 +338,6 @@ server <- function(input, output) {
                font_size = "6pt", align = "left", baseline = "middle") %>%
       ly_text(symx2, numbery, text = Ratio, data = course,
               font_size = "8pt", align = "left", baseline = "middle")
-    
     })
   
   output$plot2 <- renderPlot({
@@ -261,14 +385,14 @@ server <- function(input, output) {
   
   output$ts <- renderDygraph({
   
-  dygraph(data = authors, main = "Reading List Inclusion Rates over Time") %>%
+  dygraph(data = authors) %>%
     dyOptions(fillGraph = TRUE, fillAlpha = 0.1, panEdgeFraction = 0.1) %>%
-    dyLimit(.2, color = "red") %>%
-    dyLegend(width = 400) %>%
+    dyLimit(.2, color = "black") %>%
+    dyLegend(width = 400, hideOnMouseOut = FALSE) %>%
     dyAxis("y", label = "Percentage of All Readings",valueRange = c(0, 1.001)) %>%
     dyAxis("x", label = "Date of Publication") %>%
-    dySeries("V2", label = "Female Inclusion") %>%
-    dySeries("V3", label = "Male Inclusion")
+    dySeries("V2", label = "Female Author Ratio", color = "#db4c3f") %>%
+    dySeries("V3", label = "Male Author Ratio", color = "#0f4792")
   })
   
   output$pubtable <- DT::renderDataTable(selectedData())

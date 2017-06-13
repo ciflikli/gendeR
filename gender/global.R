@@ -8,6 +8,8 @@ library(RColorBrewer)
 library(rbokeh)
 library(stringr)
 library(mosaic)
+library(shinyjs)
+library(bubbles)
 
 total <- read_csv("total.csv")
 gender <- read_csv("gender_sb.csv")
@@ -85,19 +87,26 @@ gender$Decade <- ifelse(gender$Year > 1959 & gender$Year < 1970,1960,
                                       ifelse(gender$Year > 1989 & gender$Year < 2000,1990,
                                              ifelse(gender$Year > 1999 & gender$Year < 2010,2000,2010)))))
 
-test <- gender[gender$Female==1,] %>%
-  group_by_(.dots=c("Decade","Type","topp","Single","female.cofemale")) %>%
-  summarise(n=n())
+dat2 <- gender %>%
+  group_by(AutGen) %>%
+  summarise(n = n())
+dat2$Male <- str_count(dat2$AutGen, "M")
+dat2$Female <- str_count(dat2$AutGen, "F")
+dat2$Total <- str_length(dat2$AutGen)
+
+test <- gender[gender$Female==1, ] %>%
+  group_by_(.dots=c("Decade", "Type", "topp", "Single", "female.cofemale")) %>%
+  summarise(n = n())
 
 test <- na.omit(test)
 
-test$topp <- ifelse(test$topp==1,"TopPublisher","Other")
-test$Single <- ifelse(test$Single==1,"SingleAuthored","CoAuthored")
-test$female.cofemale <- ifelse(test$female.cofemale==1,"FemaleCoAuthor",
-                               ifelse(test$female.cofemale==0,"MaleCoAuthor","")
+test$topp <- ifelse(test$topp == 1 ,"TopPublisher", "Other")
+test$Single <- ifelse(test$Single == 1,"SingleAuthored", "CoAuthored")
+test$female.cofemale <- ifelse(test$female.cofemale == 1, "FemaleCoAuthor",
+                               ifelse(test$female.cofemale == 0, "MaleCoAuthor","")
 )
-colnames(test)[c(3,5)] <- c("Top","Coauthor")
-test$Coauthor <- ifelse(test$Single=="SingleAuthored","",test$Coauthor)
+colnames(test)[c(3,5)] <- c("Top", "Coauthor")
+test$Coauthor <- ifelse(test$Single=="SingleAuthored", "", test$Coauthor)
 
 test <- within(test, Path <- paste(Decade, Type, Top, Single, Coauthor, sep="-"))
 test$Path <- ifelse(test$Coauthor=="",substr(test$Path,1,nchar(test$Path)-1),test$Path)
