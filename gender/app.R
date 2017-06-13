@@ -64,8 +64,7 @@ body <- dashboardBody(includeCSS("styles.css"),
             h3("Which sets of conditions are more conducive?"), br(),
             p("Hover on the dial starting from the innermost circle to find out reading list inclusion trends based on the sequence:", br(),
               "Decade > Article/Book > Top/Other Publisher > Single/Co-Authored > Female/Male Co-Author"),
-            fluidRow(sunburstOutput(outputId = "sb", height = 550)), br(),
-            p("Sequence: Decade > Article/Book > Top/Other Publisher > Single/Co-Authored > Female/Male Co-Author"))))
+            fluidRow(sunburstOutput(outputId = "sb", height = 550)))))
             ),
     tabItem(tabName = "course",
             fluidPage(fluidRow(
