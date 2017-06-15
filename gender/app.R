@@ -61,21 +61,21 @@ body <- dashboardBody(includeCSS("styles.css"),
     tabItem(tabName = "female",
             fluidPage(fluidRow(column(12,
             h2("Pathways to Female Author Inclusion"),
-            h3("Which sets of conditions are more conducive?"), br(),
+            #h3("Which sets of conditions are more conducive?"), br(),
             p("Hover on the dial starting from the innermost circle to find out reading list inclusion trends based on the sequence:", br(),
               "Decade > Article/Book > Top/Other Publisher > Single/Co-Authored > Female/Male Co-Author"),
             fluidRow(sunburstOutput(outputId = "sb", height = 550)))))
             ),
     tabItem(tabName = "course",
-            fluidPage(fluidRow(
+            fluidPage(fluidRow(column(12, wellPanel(style = "overflow-y:scroll; max-height: 600px; max-width: 1200px",
              h2("Female Author Ratio Breakdown by Cluster", img(src = "key.png", height = 42, width = 250)),
-               rbokehOutput(outputId = "plot1", width = "200%")),
+               rbokehOutput(outputId = "plot1", width = "200%")))),
              fluidRow(column(2,
              br(),
              h4("Legend"),
              br(),
                img(src = "avatar.png", height = 83, width = 100)),
-                      column(5, br(), br(), br(),
+                      column(5, br(), br(),
                              h5("Core: LSE core course indicator"),
                              h5("Ratio: Reading List Female Author Ratio"),
                              h5("Code: LSE Course Code"),
@@ -189,8 +189,25 @@ body <- dashboardBody(includeCSS("styles.css"),
           href = "https://thedisorderofthings.com/2017/04/20/gender-and-diversity-in-the-ir-curriculum-why-should-we-care/")),
         p("This Shiny app is built in R, utilising packages such as"),
         code("shinydashboard, shinyjs, dygraphs, sunburstR, DT, htmlwidgets, RColorBrewer, bubbles, rbokeh"), br(), br(),
-        p("Data and code used for generating this app will be made publicly available on GitHub after publication."))
-            ))
+        p("Data and code used for generating this app will be made publicly available on GitHub after publication.")),
+              column(6,
+              h2("Additional Links"),
+              p("Evans, Heather K. and A. Moulder. 2011.", a("'Reflecting on a Decade of Women’s Publications in Four Top Political Science Journals'.",
+              href= "https://www.cambridge.org/core/journals/ps-political-science-and-politics/article/reflecting-on-a-decade-of-womens-publications-in-four-top-political-science-journals/4F8D8CDB080BC18877D8E1E50622B32E"),
+                "PS: Political Science and Politics 44(4): 793-798.", br(), br(),
+                "Maliniak, Daniel, Ryan Powers, and Barbara F. Walters. 2013.", a("The Gender Citation Gap in International Relations.",
+              href = "https://www.cambridge.org/core/journals/international-organization/article/the-gender-citation-gap-in-international-relations/3A769C5CFA7E24C32641CDB2FD03126A"),
+              "International Organization 67(4): 889-922.", br(), br(),
+              "Mitchell, Sara McLaughlin, Samantha Lange, and Holly Brus. 2013.", a("Gendered Citation Patters in International Relations Journals.", href = "http://www.saramitchell.org/mlb.pdf"),
+              "International Studies Perspectives 14(4): 485-492.", br(), br(),
+              "Nexon, Daniel. 2013.", a("The Citation Gap: Results of a Self Experiment.", href = ""), "Duck of Minerva.", br(), br(),
+              "Young, Cheryl. 1995.", a("An Assessment of Articles Published by Women in 15 Top Political Science Journals.", href = "http://www.saramitchell.org/young.pdf"),
+              "PS: Political Science & Politics 28(3): 525–33.", br(), br(),
+              a("Gender Balance Assessment Tool", icon("external-link"), href = "https://jlsumner.shinyapps.io/syllabustool/"), br(), br(),
+              a("Open Syllabus Explorer: Mapping the College Curriculum across 1M+ Syllabi", icon("external-link"),
+                href = "http://explorer.opensyllabusproject.org/"), br(), br(),
+              a("Women Also Know Stuff", icon("external-link"), href = "http://womenalsoknowstuff.com/"))
+                     )))
  )
 )
 
@@ -260,10 +277,10 @@ ui <- dashboardPage(skin = "red",
 server <- function(input, output) {
   
   #Make sidebar collapse into icons instead of nothing
-  runjs({'
-        var el2 = document.querySelector(".skin-red");
-        el2.className = "skin-red sidebar-mini";
-        '})
+  #runjs({'
+  #      var el2 = document.querySelector(".skin-red");
+  #      el2.className = "skin-red sidebar-mini";
+  #      '})
   
   #####Reactive datasets#####
   
@@ -309,7 +326,7 @@ server <- function(input, output) {
   output$male <- renderValueBox({
     valueBox(
       value = tags$p(sum(coData()$n), style = "font-size: 80%;"),
-      subtitle = tags$p("Total number of readings in this selection", style = "font-size: 85%;"),
+      subtitle = tags$p("Total number of readings", style = "font-size: 85%;"),
       icon = tags$i(icon("book")), color = "light-blue"
     )
   })
@@ -317,7 +334,7 @@ server <- function(input, output) {
   output$female <- renderValueBox({
     valueBox(
       value = tags$p(sum(coData()$n[coData()$Female > 0]), style = "font-size: 80%;"),
-      subtitle = tags$p("Readings featuring at least one female author", style = "font-size: 85%;"),
+      subtitle = tags$p("Features at least one female author", style = "font-size: 85%;"),
       icon = tags$i(icon("venus")), color = "light-blue"
     )
   })
@@ -366,39 +383,40 @@ server <- function(input, output) {
       dySeries("V3", label = "Male Author Ratio", color = "#0f4792")
   })
   
-  #Sunburst using static patch data (code at the end makes sure legend is on when first opened)
+  #Sunburst using static patch data (.js code at the end makes sure the legend is on by default; use with htmlwidgets)
   
   output$sb <- renderSunburst({
-    htmlwidgets::onRender(
+    #htmlwidgets::onRender(
       sunburst(patch, count = TRUE,
                legend = list(w = 150, h = 25, s = 5, t = 25),
                breadcrumb = list(w = 0, h = 25, s = 5, t = 10),
-               colors = c(brewer.pal(7, "Reds"), brewer.pal(7, "Blues")),
+               colors = c("", blues[1:8], reds[7:2]), #For some reason, had to assign a blank colour first for the palette sequences to work as intended
                legendOrder = c("1960", "1970", "1980", "1990", "2000", "2010",
-                               "Article", "Book",
-                               "TopPublisher", "Other",
-                               "SingleAuthored", "CoAuthored",
-                               "MaleCoAuthor", "FemaleCoAuthor")),"
-      function(el,x){
-      // check legend
-      d3.select(el).select('.sunburst-togglelegend').property('checked',true);
-      // simulate click
-      d3.select(el).select('.sunburst-togglelegend').on('click')();
-      }"
-    )
+                               "Book", "Article",
+                               "OtherPublisher", "TopPublisher",
+                               "CoAuthored", "SingleAuthored",
+                               "MaleCoAuthor", "FemaleCoAuthor"))#,
+      #"
+      #function(el, x){
+      #d3.select(el).select('.sunburst-togglelegend').property('checked',true);
+      #d3.select(el).select('.sunburst-togglelegend').on('click')();
+      #}
+      #"
+    #)
   })
   
   #Bokeh using static course data
   
   output$plot1 <- renderRbokeh({
     figure(title = "LSE IR Courses 2015-2016",
-           tools = c("pan", "box_zoom", "wheel_zoom", "reset", "hover"),
+           tools = c("pan", "wheel_zoom", "reset", "hover"),
            ylim = as.character(1:5),
            xlim = as.character(0:13), 
-           xgrid = FALSE, ygrid = FALSE, xaxes = FALSE, yaxes = FALSE,
-           ylab = "F/M Ratio", xlab = "IR Course Level",
-           height = 1200, width = 3450,
-           toolbar_location = "above", h_symmetry = TRUE, v_symmetry = TRUE) %>%
+           xgrid = FALSE, ygrid = FALSE,
+           xaxes = FALSE, yaxes = FALSE,
+           height = 600, width = 1725,
+           h_symmetry = TRUE, v_symmetry = TRUE,
+           toolbar_location = "left") %>%
       #Create centered rectangles
       ly_crect(xcor, ycor, data = course, width = .95, height = .95,
                fill_color = color, line_color = "#252525", fill_alpha = .6,

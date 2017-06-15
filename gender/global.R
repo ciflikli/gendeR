@@ -57,7 +57,7 @@ course$symx <- paste(course$xcor, ":0.1", sep = "")
 course$numbery <- paste(course$ycor, ":0.8", sep = "")
 course$massy <- paste(course$ycor, ":0.15", sep = "")
 course$namey <- paste(course$ycor, ":0.3", sep = "")
-course$symx2 <- paste(course$xcor, ":0.7", sep = "")
+course$symx2 <- paste(course$xcor, ":0.65", sep = "")
 
 #Make data user-friendly
 
@@ -107,9 +107,13 @@ test <- gender[gender$Female==1, ] %>%
 
 test <- na.omit(test)
 
+#Create colour vectors so that later we can drop very light/dark colours (makes it easier to read the text)
+blues <- c(brewer.pal(9, "Blues"))
+reds <- c(brewer.pal(9, "Reds"))
+
 #Provide user-friendly names
 
-test$topp <- ifelse(test$topp == 1 ,"TopPublisher", "Other")
+test$topp <- ifelse(test$topp == 1 ,"TopPublisher", "OtherPublisher")
 test$Single <- ifelse(test$Single == 1,"SingleAuthored", "CoAuthored")
 test$female.cofemale <- ifelse(test$female.cofemale == 1, "FemaleCoAuthor",
                                ifelse(test$female.cofemale == 0, "MaleCoAuthor","")
