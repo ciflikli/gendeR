@@ -31,11 +31,11 @@ course <- read_csv("course.csv")
 
 #Manual Way for precise control
 
-course$xcor <- c(0, 1, 2, 1, 2, 2, 3, 3, 3, 4,
-                 4, 4, 4, 5, 5, 5, 5, 5, 6, 6,
-                 6, 7, 7, 7, 7, 7, 8, 8, 9, 9,
-                 9, 9, 10, 11, 10, 10, 11, 11, 12, 12,
-                 12, 13, 13)
+course$xcor <- c(0, 1, 2, 1, 2, 3, 4, 4, 4, 5,
+                 5, 5, 5, 6, 6, 6, 6, 6, 7, 7,
+                 7, 8, 8, 8, 8, 8, 9, 9, 10, 10,
+                 10, 10, 11, 12, 11, 11, 12, 12, 13, 13,
+                 13, 14, 14)
 course$ycor <- c(2, 2, 2, 4, 4, 1, 3, 1, 2, 5,
                  1, 2, 3, 5, 1, 3, 2, 4, 3, 2,
                  5, 4, 1, 2, 5, 3, 3, 1, 2, 5,
@@ -57,7 +57,7 @@ course$symx <- paste(course$xcor, ":0.1", sep = "")
 course$numbery <- paste(course$ycor, ":0.8", sep = "")
 course$massy <- paste(course$ycor, ":0.15", sep = "")
 course$namey <- paste(course$ycor, ":0.3", sep = "")
-course$symx2 <- paste(course$xcor, ":0.7", sep = "")
+course$symx2 <- paste(course$xcor, ":0.65", sep = "")
 
 #Make data user-friendly
 
@@ -107,9 +107,13 @@ test <- gender[gender$Female==1, ] %>%
 
 test <- na.omit(test)
 
+#Create colour vectors so that later we can drop very light/dark colours (makes it easier to read the text)
+blues <- c(brewer.pal(9, "Blues"))
+reds <- c(brewer.pal(9, "Reds"))
+
 #Provide user-friendly names
 
-test$topp <- ifelse(test$topp == 1 ,"TopPublisher", "Other")
+test$topp <- ifelse(test$topp == 1 ,"TopPublisher", "OtherPublisher")
 test$Single <- ifelse(test$Single == 1,"SingleAuthored", "CoAuthored")
 test$female.cofemale <- ifelse(test$female.cofemale == 1, "FemaleCoAuthor",
                                ifelse(test$female.cofemale == 0, "MaleCoAuthor","")
