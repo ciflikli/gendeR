@@ -69,7 +69,7 @@ body <- dashboardBody(includeCSS("styles.css"),
     tabItem(tabName = "course",
             fluidPage(fluidRow(column(12, wellPanel(style = "overflow-y:scroll; max-height: 600px; max-width: 1200px",
              h2("Female Author Ratio Breakdown by Cluster", img(src = "key.png", height = 42, width = 250)),
-               rbokehOutput(outputId = "plot1", width = "200%")))),
+               rbokehOutput(outputId = "plot1", width = "210%")))),
              fluidRow(column(2,
              br(),
              h4("Legend"),
@@ -277,10 +277,10 @@ ui <- dashboardPage(skin = "red",
 server <- function(input, output) {
   
   #Make sidebar collapse into icons instead of nothing
-  #runjs({'
-  #      var el2 = document.querySelector(".skin-red");
-  #      el2.className = "skin-red sidebar-mini";
-  #      '})
+  runjs({"
+        var el2 = document.querySelector('.skin-red');
+        el2.className = 'skin-red sidebar-mini';
+        "})
   
   #####Reactive datasets#####
   
@@ -334,7 +334,7 @@ server <- function(input, output) {
   output$female <- renderValueBox({
     valueBox(
       value = tags$p(sum(coData()$n[coData()$Female > 0]), style = "font-size: 80%;"),
-      subtitle = tags$p("Features at least one female author", style = "font-size: 85%;"),
+      subtitle = tags$p("Atleast one female author involved", style = "font-size: 85%;"),
       icon = tags$i(icon("venus")), color = "light-blue"
     )
   })
@@ -411,10 +411,10 @@ server <- function(input, output) {
     figure(title = "LSE IR Courses 2015-2016",
            tools = c("pan", "wheel_zoom", "reset", "hover"),
            ylim = as.character(1:5),
-           xlim = as.character(0:13), 
+           xlim = as.character(0:14), 
            xgrid = FALSE, ygrid = FALSE,
            xaxes = FALSE, yaxes = FALSE,
-           height = 600, width = 1725,
+           height = 600, width = 1800,
            h_symmetry = TRUE, v_symmetry = TRUE,
            toolbar_location = "left") %>%
       #Create centered rectangles
