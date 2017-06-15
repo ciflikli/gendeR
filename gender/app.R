@@ -383,7 +383,7 @@ server <- function(input, output) {
       dySeries("V3", label = "Male Author Ratio", color = "#0f4792")
   })
   
-  #Sunburst using static patch data (.js code at the end makes sure the legend is on by default; use with htmlwidgets)
+  #Sunburst using static patch data (code at the end makes sure the legend is on by default; use with htmlwidgets)
   
   output$sb <- renderSunburst({
     #htmlwidgets::onRender(
