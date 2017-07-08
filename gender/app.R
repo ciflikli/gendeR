@@ -19,8 +19,8 @@ sidebar <- dashboardSidebar(
     ),
     menuItem("About the Project", icon = icon("user-circle"), tabName = "project"
     ),
-    menuItem("Source code for app", icon = icon("github"),badgeLabel = "pending", badgeColor = "red"
-             #href = "https://github.com/ciflikli/gender/blob/master/gender/app.R"
+    menuItem("Source code for app", icon = icon("github"), badgeLabel = "pending", badgeColor = "red"
+             #href = "https://github.com/ciflikli//gender/app.R"
     ),
     menuItem("g.ciflikli@lse.ac.uk", icon = icon("envelope"),
              href = "mailto:g.ciflikli@lse.ac.uk")
@@ -39,12 +39,10 @@ body <- dashboardBody(includeCSS("styles.css"),
                      fluidRow(
                        column(width = 6,
                               plotOutput("plot2", height = 400,
-                                         #add the hover options
                                          hover = hoverOpts(
                                            id = "plot2_hover",
                                            nullOutside = FALSE))),
                        column(width = 6,
-                       #the second plot will be hidden if the user's mouse is not on the first one (Set nullOutside = TRUE above to achieve this)
                               conditionalPanel(
                                 condition = "input.plot2_hover != null",
                                 plotOutput("plot3", height = 400)))),
@@ -61,7 +59,6 @@ body <- dashboardBody(includeCSS("styles.css"),
     tabItem(tabName = "female",
             fluidPage(fluidRow(column(12,
             h2("Pathways to Female Author Inclusion"),
-            #h3("Which sets of conditions are more conducive?"), br(),
             p("Hover on the dial starting from the innermost circle to find out reading list inclusion trends based on the sequence:", br(),
               "Decade > Article/Book > Top/Other Publisher > Single/Co-Authored > Female/Male Co-Author"),
             fluidRow(sunburstOutput(outputId = "sb", height = 550)))))
