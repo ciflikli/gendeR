@@ -19,8 +19,8 @@ sidebar <- dashboardSidebar(
     ),
     menuItem("About the Project", icon = icon("user-circle"), tabName = "project"
     ),
-    menuItem("Source code for app", icon = icon("github"), badgeLabel = "pending", badgeColor = "red"
-             #href = "https://github.com/ciflikli//gender/app.R"
+    menuItem("Source code for app", icon = icon("github"), #badgeLabel = "pending", badgeColor = "red"
+             href = "https://github.com/ciflikli//gender/"
     ),
     menuItem("g.ciflikli@lse.ac.uk", icon = icon("envelope"),
              href = "mailto:g.ciflikli@lse.ac.uk")
