@@ -50,8 +50,7 @@ body <- dashboardBody(includeCSS("styles.css"),
                        p("Since 1965, there is an ever increasing trend in the number of publications authored by female scholars included
                          in LSE IR reading lists. However, an increase in absolute numbers does not necessitate relative improvement:
                          hover/click on the left plot to reveal the actual trend*. Instead, we see the", a("Pareto (80/20) principle at work:",
-                         href = "https://en.wikipedia.org/wiki/Pareto_principle"), "The rich get richer, and no real progress is made.", align = "justify"),
-                       p("* Excuse the old-fashioned colour scheme.")
+                         href = "https://en.wikipedia.org/wiki/Pareto_principle"), "The rich get richer, and no real progress is made.", align = "justify")
                      )
                     )
                 )
@@ -105,7 +104,9 @@ body <- dashboardBody(includeCSS("styles.css"),
                 The play button under the sliders animates the graph by increasing the selected value by one until it reaches its maximum.
                 The first slider creates a subset based on the value range: The default '2-3' only shows works featuring either 2 or 3 authors,
                 which excludes single-authored pieces by authors from both genders. Using the other sliders, all gender combinations can be analysed.
-                As coding conserved the first-last author sequence, 'FM' is qualitatively different than 'MF'.", align = "justify"),
+                As coding conserved the first-last author sequence, 'FM' is qualitatively different than 'MF'. Note that the bubble circumferences
+                are calculated using square roots: the differences look smaller than they actually are. Otherwise, most female author groups
+                would be invisible.", align = "justify"),
               fluidRow(column(4,
                               sliderInput("max", "Select Maximum Number of Total Authors:",
                                           step = 1, min = 1, max = 6, value = c(2, 3), animate = TRUE)),
@@ -163,7 +164,7 @@ body <- dashboardBody(includeCSS("styles.css"),
        p("The dataset is based on an export of", a("Moodle", href = "http://www.lse.ac.uk/internationalRelations/aboutthedepartment/forstudents/moodle.aspx"), 
        "data containing syllabi for each undergraduate,
        master's and PhD level IR course on offer at the LSE in the 2015-16 academic year. A total of 43
-       courses (18 undergraduate-level, 23 master's-level, and 2 PhD-level)
+       courses (18 Undergraduate-level, 23 Master's-level, and 2 PhD-level)
        render 12,354 non-unique (2,570 by female authors) textual sources listed as both essential and background reading material.
        The analysis focuses on books and articles published between 1960 and 2015. Finally, 
        in order to tackle the gender bias issue as it relates to authorship in academia,
@@ -341,7 +342,7 @@ server <- function(input, output) {
   #First plot using static gender data
   
   output$plot2 <- renderPlot({
-    q <- ggplot(gender[gender$Year > 1965 & gender$Year < 2017 & gender$Female==1, ],
+    q <- ggplot(gender[gender$Year > 1965 & gender$Year < 2017 & gender$Female == 1, ],
          aes(x = Year, fill = Gender)) +
          geom_histogram(binwidth = .5, alpha = 1, position = "identity", colour = "#db4c3f") +
          scale_x_continuous(name = "Date of Publication") +
@@ -357,7 +358,7 @@ server <- function(input, output) {
   output$plot3 <- renderPlot({
     
     p <- ggplot(gender[gender$Year > 1965 & gender$Year < 2017, ], aes(x = Year, fill = Gender)) +
-         geom_histogram(binwidth=1, alpha=1, position = "dodge", colour = "#0f4792") +
+         geom_histogram(binwidth = 1, alpha = 1, position = "dodge", colour = "#0f4792") +
          scale_x_continuous(name = "Date of Publication") +
          scale_y_continuous(name = "Times Included in Reading List") +
          labs(title = "Number of Publications included in LSE IR Reading Lists",
