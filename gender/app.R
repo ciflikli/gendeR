@@ -74,12 +74,12 @@ body <- dashboardBody(includeCSS("styles.css"),
                       column(5, br(), br(),
                              h5("Core: LSE core course indicator"),
                              h5("Ratio: Reading List Female Author Ratio"),
-                             h5("Code: LSE Course Code"),
-                             h5("Cluster: Theory, Security/Statecraft, IO/Law, IPE, Regional"),
+                             #h5("Cluster: Theory, Security/Statecraft, IO/Law, IPE, Regional"),
                              h5("Level: Undergraduate, Masters, PhD"),
                              h5("Hover over course boxes for additional information.")
                                  ),
-             column(5, br(), h4("Overall F/M Ratio 0.19"), br(), img(src = "legend.png", height = 83, width = 326)))
+             column(5, br(), h4("Overall F/M Ratio 0.19"), br()#, img(src = "legend.png", height = 83, width = 326)
+                    ))
              )),
     tabItem(tabName = "logit",
             fluidPage(fluidRow(
@@ -171,8 +171,7 @@ body <- dashboardBody(includeCSS("styles.css"),
        sex of the author(s) are coded M/F*. In case of multiple authors, the binary coding indicates
        at least one female scholar is involved. All coding was done manually by LSE IR PhD candidates
        on their spare time.", align = "justify"), br(),
-       p("* We readily acknowledge the limitations of a binary gender indicator.
-         However, for obvious reasons, we do not have access to fine-grained data on this particular characteristic.")
+       p("* We readily acknowledge the limitations of a binary gender indicator.")
        ))
        ),
     tabItem(tabName = "project",
@@ -406,7 +405,7 @@ server <- function(input, output) {
   #Bokeh using static course data
   
   output$plot1 <- renderRbokeh({
-    figure(title = "LSE IR Courses 2015-2016",
+    figure(title = "Anonymised LSE IR Courses 2015-2016",
            tools = c("pan", "wheel_zoom", "reset", "hover"),
            ylim = as.character(1:5),
            xlim = as.character(0:14), 
@@ -418,23 +417,23 @@ server <- function(input, output) {
       #Create centered rectangles
       ly_crect(xcor, ycor, data = course, width = .95, height = .95,
                fill_color = color, line_color = "#252525", fill_alpha = .6,
-               hover = list(Code, Course, Convener, Readings)) %>%
+               hover = list(Convener, Readings)) %>%
       #Course code
-      ly_text(symx, ycor, text = Code, data = course, 
+      ly_text(symx, ycor, text = Ratio, data = course, 
               font_style = "bold", font_size = "14pt",
               align = "left", baseline = "middle") %>%
       #Core course indicator
-      ly_text(symx, numbery, text = Core, data = course,
+      ly_text(symx2, numbery, text = Core, data = course,
               font_style = "bold", font_size = "6pt", align = "left", baseline = "middle") %>%
       #Cluster name
-      ly_text(symx, namey, text = Cluster, data = course,
-              font_size = "6pt", align = "left", baseline = "middle") %>%
+      #ly_text(symx, namey, text = Cluster, data = course,
+      #        font_size = "6pt", align = "left", baseline = "middle") %>%
       #Course level
       ly_text(symx, massy, text = Level, data = course,
-              font_size = "6pt", align = "left", baseline = "middle") %>%
+              font_size = "6pt", align = "left", baseline = "middle") #%>%
       #F/M ratio
-      ly_text(symx2, numbery, text = Ratio, data = course,
-              font_size = "8pt", align = "left", baseline = "middle")
+      #ly_text(symx, numbery, text = Ratio, data = course,
+      #        font_size = "8pt", align = "left", baseline = "middle")
   })
   
   #Logit using reactive plotData()
