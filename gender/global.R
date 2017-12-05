@@ -67,7 +67,7 @@ unite(Convener, Rank, Convener, sep = "/")
 course$Ratio <- format(round(course$Ratio, 2), nsmall = 2)
 course$WRatio <- format(round(course$WRatio, 2), nsmall = 2)
 course$Code <- paste0("IR",course$Code)
-course$Level <- ifelse(course$Level=="Undergrad", "Undergraduate", course$Level)
+course$Level <- ifelse(course$Level == "Undergrad", "Undergraduate", course$Level)
 course$Readings <- course$Total
 
 ######Create data for DT
@@ -79,14 +79,14 @@ pub$Ratio <- ifelse(is.nan(pub$Ratio), 0, pub$Ratio)
 
 ######Prepare data for ggplot
 
-gender$Gender <- ifelse(gender$Female==1, "Female", "Male")
+gender$Gender <- ifelse(gender$Female == 1, "Female", "Male")
 gender$Female <- as.factor(gender$Female)
 gender$topp <- ifelse(gender$Top == 1 | gender$Top.Press == 1, 1, 0)
-gender$Decade <- ifelse(gender$Year > 1959 & gender$Year < 1970,1960,
-                        ifelse(gender$Year > 1969 & gender$Year < 1980,1970,
-                               ifelse(gender$Year > 1979 & gender$Year < 1990,1980,
-                                      ifelse(gender$Year > 1989 & gender$Year < 2000,1990,
-                                             ifelse(gender$Year > 1999 & gender$Year < 2010,2000,2010)))))
+gender$Decade <- ifelse(gender$Year > 1959 & gender$Year < 1970, 1960,
+                        ifelse(gender$Year > 1969 & gender$Year < 1980, 1970,
+                               ifelse(gender$Year > 1979 & gender$Year < 1990, 1980,
+                                      ifelse(gender$Year > 1989 & gender$Year < 2000, 1990,
+                                             ifelse(gender$Year > 1999 & gender$Year < 2010, 2000, 2010)))))
 
 ######Create Co-Author data
 
@@ -101,8 +101,8 @@ dat2$Total <- str_length(dat2$AutGen)
 
 #Create summaries
 
-test <- gender[gender$Female==1, ] %>%
-  group_by_(.dots=c("Decade", "Type", "topp", "Single", "female.cofemale")) %>%
+test <- gender[gender$Female == 1, ] %>%
+  group_by_(.dots = c("Decade", "Type", "topp", "Single", "female.cofemale")) %>%
   summarise(n = n())
 
 test <- na.omit(test)
@@ -113,13 +113,13 @@ reds <- c(brewer.pal(9, "Reds"))
 
 #Provide user-friendly names
 
-test$topp <- ifelse(test$topp == 1 ,"TopPublisher", "OtherPublisher")
+test$topp <- ifelse(test$topp == 1, "TopPublisher", "OtherPublisher")
 test$Single <- ifelse(test$Single == 1,"SingleAuthored", "CoAuthored")
 test$female.cofemale <- ifelse(test$female.cofemale == 1, "FemaleCoAuthor",
                                ifelse(test$female.cofemale == 0, "MaleCoAuthor","")
 )
-colnames(test)[c(3,5)] <- c("Top", "Coauthor")
-test$Coauthor <- ifelse(test$Single=="SingleAuthored", "", test$Coauthor)
+colnames(test)[c(3, 5)] <- c("Top", "Coauthor")
+test$Coauthor <- ifelse(test$Single == "SingleAuthored", "", test$Coauthor)
 
 #Create sequence data
 #Paste strings and add '-' in between
@@ -132,8 +132,8 @@ test$Path <- ifelse(test$Coauthor == "", substr(test$Path, 1, nchar(test$Path) -
 
 #Subset the end product and reorder
 
-patch <- test[,6:7]
-patch <- patch[c(2,1)]
+patch <- test[, 6:7]
+patch <- patch[c(2, 1)]
 
 ######Create time-series data for dygraphs
 
@@ -146,5 +146,5 @@ authors$V1 <- as.Date(authors$V1)
 authors$V3 <- 1 - authors$V2
 authors <- as.matrix(authors)
 rownames(authors) = authors[,1]
-authors <- authors[,2:3]
+authors <- authors[, 2:3]
 authors <- authors[43:99, ]
