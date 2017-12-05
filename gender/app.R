@@ -19,11 +19,11 @@ sidebar <- dashboardSidebar(
     ),
     menuItem("About the Project", icon = icon("user-circle"), tabName = "project"
     ),
-    menuItem("Source code for app", icon = icon("github"), #badgeLabel = "pending", badgeColor = "red"
+    menuItem("Source code", icon = icon("github"), newtab = TRUE, #badgeLabel = "pending", badgeColor = "red"
              href = "https://github.com/ciflikli//gender/"
     ),
     menuItem("g.ciflikli@lse.ac.uk", icon = icon("envelope"),
-             href = "mailto:g.ciflikli@lse.ac.uk")
+             href = "mailto:g.ciflikli@lse.ac.uk?subject=LSE IR Gender App")
   )
 )
 
@@ -67,18 +67,23 @@ body <- dashboardBody(includeCSS("styles.css"),
              h2("Female Author Ratio Breakdown by Cluster", img(src = "key.png", height = 42, width = 250)),
                rbokehOutput(outputId = "plot1", width = "210%")))),
              fluidRow(column(2,
-             br(),
-             h4("Legend"),
+             h4("Course Icon"),
              br(),
                img(src = "avatar.png", height = 83, width = 100)),
-                      column(5, br(), br(),
+                      column(5, h4("Legend"),
                              h5("Core: LSE core course indicator"),
                              h5("Ratio: Reading List Female Author Ratio"),
                              #h5("Cluster: Theory, Security/Statecraft, IO/Law, IPE, Regional"),
                              h5("Level: Undergraduate, Masters, PhD"),
-                             h5("Hover over course boxes for additional information.")
+                             h5("Hover over course boxes for additional information on:"),
+                             h5("Convener rank, gender, and the total number of readings.")
                                  ),
-             column(5, br(), h4("Overall F/M Ratio 0.19"), br()#, img(src = "legend.png", height = 83, width = 326)
+                      column(5, h4("Overall F/M Ratio 0.204"), #, img(src = "legend.png", height = 83, width = 326)
+                             h5("IO/Law: 0.291 (7 Courses)"),
+                             h5("Theory: 0.225 (9 Courses)"),
+                             h5("IPE: 0.216 (12 Courses)"),
+                             h5("Regional: 0.156 (7 Courses)"),
+                             h5("Security/Statecraft: 0.129 (8 Courses)")
                     ))
              )),
     tabItem(tabName = "logit",
@@ -87,9 +92,11 @@ body <- dashboardBody(includeCSS("styles.css"),
               fluidRow(column(12,
                               plotOutput("glmplot", height = 400))), br(),
               fluidRow(column(4,
-                              p("First slider creates a new dummy variable which is set to 0 if it is not met (miss) in a calendar year and 1 (hit) otherwise.
-                                The second slider selects the starting year for the data. For example, the default settings produce a logistic link function
-                                showing which years had at least", span("20%", style = "color:#468cc8"), "female authors since ", span("1960.", style = "color:#468cc8"),
+                              p("First slider creates a new dummy variable which is set to 0 if it is not met (miss)
+                                in a calendar year and 1 (hit) otherwise.
+                                The second slider selects the starting year for the data. For example, the default settings produce                                 a logistic link function showing which years had at least",
+                                span("20%", style = "color:#468cc8"), "female authors since ",
+                                span("1960.", style = "color:#468cc8"),
                                 align = "justify")),
               fluidRow(column(4,
                      sliderInput("glmratio", "Select Female Author Percentage:", step = 1, min = 0, max = 40, value = 20)),
@@ -100,13 +107,13 @@ body <- dashboardBody(includeCSS("styles.css"),
     tabItem(tabName = "coauthor",
             fluidPage(fluidRow(
               h2("Co-Authorship Patterns"),
-              p("Explore co-authorship preferences by setting different constraints on author gender and/or total number of authors.
-                The play button under the sliders animates the graph by increasing the selected value by one until it reaches its maximum.
-                The first slider creates a subset based on the value range: The default '2-3' only shows works featuring either 2 or 3 authors,
-                which excludes single-authored pieces by authors from both genders. Using the other sliders, all gender combinations can be analysed.
-                As coding conserved the first-last author sequence, 'FM' is qualitatively different than 'MF'. Note that the bubble circumferences
-                are calculated using square roots: the differences look smaller than they actually are. Otherwise, most female author groups
-                would be invisible.", align = "justify"),
+              p("Explore co-authorship preferences by setting different constraints on author gender
+                and/or total number of authors. The play button under the sliders animates the graph by increasing the selected                    value by one until it reaches its maximum.
+                The first slider creates a subset based on the value range: The default '2-3' only shows works featuring either
+                2 or 3 authors, which excludes single-authored pieces by authors from both genders. Using the other sliders,
+                all gender combinations can be analysed.
+                As coding conserved the first-last author sequence, 'FM' is qualitatively different than 'MF'. Note that the bubble                 circumferences are calculated using square roots: the differences look smaller than they actually are.
+                Otherwise, most female author groups would be invisible.", align = "justify"),
               fluidRow(column(4,
                               sliderInput("max", "Select Maximum Number of Total Authors:",
                                           step = 1, min = 1, max = 6, value = c(2, 3), animate = TRUE)),
@@ -136,12 +143,13 @@ body <- dashboardBody(includeCSS("styles.css"),
                dygraphOutput(outputId = "ts")),
              fluidRow(column(12, br(),
                p("This interactive time series analogue of the introduction plot shows reading list breakdown based on gender.
-                 Female-to-male author ratio, based on their inclusion in LSE IR reading lists, rarely hits 20% in a given publication year.
+                 Female-to-male author ratio, based on their inclusion in LSE IR reading lists, rarely hits 20% in a given                          publication year.
                  This finding is in line with that of ",
-                 a("Colgan (2017).", href = "https://docs.google.com/viewer?a=v&pid=sites&srcid=ZGVmYXVsdGRvbWFpbnxqZWZmZGNvbGdhbnxneDo3NjRkNGMyODZkNDFiMTI4"),
+                 a("Colgan (2017).",href = "https://docs.google.com/viewer?a=v&pid=sites&srcid=ZGVmYXVsdGRvbWFpbnxqZWZmZGNvbGdhbnxneDo3NjRkNGMyODZkNDFiMTI4"),
                  "Refer to the methodology tab to read about how this study was conducted.",
                  br(), br(),
-                 "* Note that the data are only accurate down to individual years, even when zoomed to monthly view.", align = "justify")
+                 "* Note that the data are only accurate down to individual years, even when zoomed to monthly view.",
+                 align = "justify")
              ))))
             ),
     tabItem(tabName = "data",
@@ -159,7 +167,7 @@ body <- dashboardBody(includeCSS("styles.css"),
             (i.e. higher number of total publications included), their F/M ratio goes down.", align = "justify"))))
             ))),
     tabItem(tabName = "methods",
-       fluidPage(column(6,
+       fluidPage(column(5,
        h2("Methodology"),
        p("The dataset is based on an export of", a("Moodle", href = "http://www.lse.ac.uk/internationalRelations/aboutthedepartment/forstudents/moodle.aspx"), 
        "data containing syllabi for each undergraduate,
@@ -171,26 +179,43 @@ body <- dashboardBody(includeCSS("styles.css"),
        sex of the author(s) are coded M/F*. In case of multiple authors, the binary coding indicates
        at least one female scholar is involved. All coding was done manually by LSE IR PhD candidates
        on their spare time.", align = "justify"), br(),
-       p("* We readily acknowledge the limitations of a binary gender indicator.")
-       ))
+       p("* We readily acknowledge the limitations of a binary gender indicator.")),
+       column(5,
+              h2("Coders"),
+              p("Sarah Bertrand"),
+              p("Ilaria Carrozza"),
+              p("Ida Danewid"),
+              p("Andrew Delatolla"),
+              p("Pilar Elizalde"),
+              p("Inez Freiin von Weitershausen"),
+              p("Elitsa Garnizova"),
+              p("Sophie Haspelagh"),
+              p("Joe Leigh"),
+              p("Gustav Meibauer"),
+              p("Sophie Meunier"),
+              p("Evelyn Pauls"),
+              p("Kiran Phull"),
+              p("Adrian Rogstad"),
+              p("William Rooke"),
+              p("Joanne Yao")
+              ))
        ),
     tabItem(tabName = "project",
        fluidPage(column(6,
         h2("Project Details"), 
-        p("This data presentation is one component of a larger gender and diversity project that is run at the LSE International Relations Department.
+        p("This data presentation is one component of a larger gender and diversity project that is run at the LSE International             Relations Department.
           Currently, two working papers are being written:"), br(),
         p("For methodology, see", em("'How to Research Gender & Diversity in the IR Curriculum: A Convergent Mixed-Methods Approach'"),
           "by Kiran Phull, Gokhan Ciflikli & Gustav Meibauer."), br(),
         p("For theory, see", em("'Is Your Syllabus Biased?: Analyzing Gender and Diversity in the IR Canon'"),
           "by Dr. Joanne Yao and Andrew Delatolla. Read guest", a("blogpost.",
-          href = "https://thedisorderofthings.com/2017/04/20/gender-and-diversity-in-the-ir-curriculum-why-should-we-care/")),
+          href = "https://thedisorderofthings.com/2017/04/20/gender-and-diversity-in-the-ir-curriculum-why-should-we-care/")), br(),
         p("This Shiny app is built in R, utilising packages such as"),
-        code("shinydashboard, shinyjs, dygraphs, sunburstR, DT, htmlwidgets, RColorBrewer, bubbles, rbokeh"), br(), br(),
-        p("Data and code used for generating this app will be made publicly available on GitHub after publication.")),
+        code("shinydashboard, shinyjs, dygraphs, sunburstR, DT, htmlwidgets, RColorBrewer, bubbles, rbokeh")),
               column(6,
               h2("Additional Links"),
               p("Evans, Heather K. and A. Moulder. 2011.", a("'Reflecting on a Decade of Women’s Publications in Four Top Political Science Journals'.",
-              href= "https://www.cambridge.org/core/journals/ps-political-science-and-politics/article/reflecting-on-a-decade-of-womens-publications-in-four-top-political-science-journals/4F8D8CDB080BC18877D8E1E50622B32E"),
+              href = "https://www.cambridge.org/core/journals/ps-political-science-and-politics/article/reflecting-on-a-decade-of-womens-publications-in-four-top-political-science-journals/4F8D8CDB080BC18877D8E1E50622B32E"),
                 "PS: Political Science and Politics 44(4): 793-798.", br(), br(),
                 "Maliniak, Daniel, Ryan Powers, and Barbara F. Walters. 2013.", a("The Gender Citation Gap in International Relations.",
               href = "https://www.cambridge.org/core/journals/international-organization/article/the-gender-citation-gap-in-international-relations/3A769C5CFA7E24C32641CDB2FD03126A"),
@@ -201,6 +226,7 @@ body <- dashboardBody(includeCSS("styles.css"),
               "Young, Cheryl. 1995.", a("An Assessment of Articles Published by Women in 15 Top Political Science Journals.", href = "http://www.saramitchell.org/young.pdf"),
               "PS: Political Science & Politics 28(3): 525–33.", br(), br(),
               a("Gender Balance Assessment Tool", icon("external-link"), href = "https://jlsumner.shinyapps.io/syllabustool/"), br(), br(),
+              a("Determine the Gender of a First Name", icon("external-link"), href = "https://genderize.io/"), br(), br(),
               a("Open Syllabus Explorer: Mapping the College Curriculum across 1M+ Syllabi", icon("external-link"),
                 href = "http://explorer.opensyllabusproject.org/"), br(), br(),
               a("Women Also Know Stuff", icon("external-link"), href = "http://womenalsoknowstuff.com/"))
@@ -383,7 +409,7 @@ server <- function(input, output) {
   #Sunburst using static patch data (code at the end makes sure the legend is on by default; use with htmlwidgets)
   
   output$sb <- renderSunburst({
-    #htmlwidgets::onRender(
+    htmlwidgets::onRender(
       sunburst(patch, count = TRUE,
                legend = list(w = 150, h = 25, s = 5, t = 25),
                breadcrumb = list(w = 0, h = 25, s = 5, t = 10),
@@ -392,14 +418,14 @@ server <- function(input, output) {
                                "Book", "Article",
                                "OtherPublisher", "TopPublisher",
                                "CoAuthored", "SingleAuthored",
-                               "MaleCoAuthor", "FemaleCoAuthor"))#,
-      #"
-      #function(el, x){
-      #d3.select(el).select('.sunburst-togglelegend').property('checked',true);
-      #d3.select(el).select('.sunburst-togglelegend').on('click')();
-      #}
-      #"
-    #)
+                               "MaleCoAuthor", "FemaleCoAuthor"), withD3 = TRUE),
+    "
+    function(el,x){
+    d3.select(el).select('.sunburst-togglelegend').property('checked', true);
+    d3.select(el).select('.sunburst-legend').style('visibility', '');
+    }
+    "
+    )
   })
   
   #Bokeh using static course data
