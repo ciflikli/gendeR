@@ -47,10 +47,11 @@ body <- dashboardBody(includeCSS("styles.css"),
                                 condition = "input.plot2_hover != null",
                                 plotOutput("plot3", height = 400)))),
                      fluidRow(br(),
-                       p("Since 1965, there is an ever increasing trend in the number of publications authored by female scholars included
-                         in LSE IR reading lists. However, an increase in absolute numbers does not necessitate relative improvement:
-                         hover/click on the left plot to reveal the actual trend*. Instead, we see the", a("Pareto (80/20) principle at work:",
-                         href = "https://en.wikipedia.org/wiki/Pareto_principle"), "The rich get richer, and no real progress is made.", align = "justify")
+                       p("Since 1965, there is an ever increasing trend in the number of publications authored by
+                         female scholars included in LSE IR reading lists. However, an increase in absolute numbers
+                         does not necessitate relative improvement: hover/click on the left plot to reveal the actual trend*.                               Instead, we see the", a("Pareto (80/20) principle at work:",
+                         href = "https://en.wikipedia.org/wiki/Pareto_principle", target = "_blank"),
+                         "The rich get richer, and no real progress is made.", align = "justify")
                      )
                     )
                 )
@@ -58,7 +59,8 @@ body <- dashboardBody(includeCSS("styles.css"),
     tabItem(tabName = "female",
             fluidPage(fluidRow(column(12,
             h2("Pathways to Female Author Inclusion"),
-            p("Hover on the dial starting from the innermost circle to find out reading list inclusion trends based on the sequence:", br(),
+            p("Hover on the dial starting from the innermost circle to find out reading list inclusion trends based
+              on the sequence:", br(),
               "Decade > Article/Book > Top/Other Publisher > Single/Co-Authored > Female/Male Co-Author"),
             fluidRow(sunburstOutput(outputId = "sb", height = 550)))))
             ),
@@ -145,7 +147,7 @@ body <- dashboardBody(includeCSS("styles.css"),
                p("This interactive time series analogue of the introduction plot shows reading list breakdown based on gender.
                  Female-to-male author ratio, based on their inclusion in LSE IR reading lists, rarely hits 20% in a given                          publication year.
                  This finding is in line with that of ",
-                 a("Colgan (2017).",href = "https://docs.google.com/viewer?a=v&pid=sites&srcid=ZGVmYXVsdGRvbWFpbnxqZWZmZGNvbGdhbnxneDo3NjRkNGMyODZkNDFiMTI4"),
+                 a("Colgan (2017).", href = "https://docs.google.com/viewer?a=v&pid=sites&srcid=ZGVmYXVsdGRvbWFpbnxqZWZmZGNvbGdhbnxneDo3NjRkNGMyODZkNDFiMTI4", target = "_blank"),
                  "Refer to the methodology tab to read about how this study was conducted.",
                  br(), br(),
                  "* Note that the data are only accurate down to individual years, even when zoomed to monthly view.",
@@ -169,7 +171,7 @@ body <- dashboardBody(includeCSS("styles.css"),
     tabItem(tabName = "methods",
        fluidPage(column(5,
        h2("Methodology"),
-       p("The dataset is based on an export of", a("Moodle", href = "http://www.lse.ac.uk/internationalRelations/aboutthedepartment/forstudents/moodle.aspx"), 
+       p("The dataset is based on an export of", a("Moodle", href = "http://www.lse.ac.uk/internationalRelations/aboutthedepartment/forstudents/moodle.aspx", target = "_blank"), 
        "data containing syllabi for each undergraduate,
        master's and PhD level IR course on offer at the LSE in the 2015-16 academic year. A total of 43
        courses (18 Undergraduate-level, 23 Master's-level, and 2 PhD-level)
@@ -190,9 +192,9 @@ body <- dashboardBody(includeCSS("styles.css"),
               p("Inez Freiin von Weitershausen"),
               p("Elitsa Garnizova"),
               p("Sophie Haspelagh"),
+              p("Taylor St John"),
               p("Joe Leigh"),
               p("Gustav Meibauer"),
-              p("Sophie Meunier"),
               p("Evelyn Pauls"),
               p("Kiran Phull"),
               p("Adrian Rogstad"),
@@ -209,27 +211,32 @@ body <- dashboardBody(includeCSS("styles.css"),
           "by Kiran Phull, Gokhan Ciflikli & Gustav Meibauer."), br(),
         p("For theory, see", em("'Is Your Syllabus Biased?: Analyzing Gender and Diversity in the IR Canon'"),
           "by Dr. Joanne Yao and Andrew Delatolla. Read guest", a("blogpost.",
-          href = "https://thedisorderofthings.com/2017/04/20/gender-and-diversity-in-the-ir-curriculum-why-should-we-care/")), br(),
-        p("This Shiny app is built in R, utilising packages such as"),
+          href = "https://thedisorderofthings.com/2017/04/20/gender-and-diversity-in-the-ir-curriculum-why-should-we-care/",
+          target = "_blank")), br(),
+        p("This Shiny app is built by", a("Gokhan Ciflikli", icon("external-link"),
+                                          href = "https://www.gokhanciflikli.com", target = "_blank"),
+          "using R, utilising packages such as"),
         code("shinydashboard, shinyjs, dygraphs, sunburstR, DT, htmlwidgets, RColorBrewer, bubbles, rbokeh")),
               column(6,
               h2("Additional Links"),
               p("Evans, Heather K. and A. Moulder. 2011.", a("'Reflecting on a Decade of Women’s Publications in Four Top Political Science Journals'.",
-              href = "https://www.cambridge.org/core/journals/ps-political-science-and-politics/article/reflecting-on-a-decade-of-womens-publications-in-four-top-political-science-journals/4F8D8CDB080BC18877D8E1E50622B32E"),
+              href = "https://www.cambridge.org/core/journals/ps-political-science-and-politics/article/reflecting-on-a-decade-of-womens-publications-in-four-top-political-science-journals/4F8D8CDB080BC18877D8E1E50622B32E", target = "_blank"),
                 "PS: Political Science and Politics 44(4): 793-798.", br(), br(),
                 "Maliniak, Daniel, Ryan Powers, and Barbara F. Walters. 2013.", a("The Gender Citation Gap in International Relations.",
-              href = "https://www.cambridge.org/core/journals/international-organization/article/the-gender-citation-gap-in-international-relations/3A769C5CFA7E24C32641CDB2FD03126A"),
+              href = "https://www.cambridge.org/core/journals/international-organization/article/the-gender-citation-gap-in-international-relations/3A769C5CFA7E24C32641CDB2FD03126A", target = "_blank"),
               "International Organization 67(4): 889-922.", br(), br(),
-              "Mitchell, Sara McLaughlin, Samantha Lange, and Holly Brus. 2013.", a("Gendered Citation Patters in International Relations Journals.", href = "http://www.saramitchell.org/mlb.pdf"),
+              "Mitchell, Sara McLaughlin, Samantha Lange, and Holly Brus. 2013.", a("Gendered Citation Patters in International Relations Journals.", href = "http://www.saramitchell.org/mlb.pdf", target = "_blank"),
               "International Studies Perspectives 14(4): 485-492.", br(), br(),
-              "Nexon, Daniel. 2013.", a("The Citation Gap: Results of a Self Experiment.", href = ""), "Duck of Minerva.", br(), br(),
-              "Young, Cheryl. 1995.", a("An Assessment of Articles Published by Women in 15 Top Political Science Journals.", href = "http://www.saramitchell.org/young.pdf"),
+              "Nexon, Daniel. 2013.", a("The Citation Gap: Results of a Self Experiment.", href = "http://duckofminerva.com/2013/08/the-citation-gap-results-of-a-self-experiment.html", target = "_blank"), "Duck of Minerva.", br(), br(),
+              "Young, Cheryl. 1995.", a("An Assessment of Articles Published by Women in 15 Top Political Science Journals.", href = "http://www.saramitchell.org/young.pdf", target = "_blank"),
               "PS: Political Science & Politics 28(3): 525–33.", br(), br(),
-              a("Gender Balance Assessment Tool", icon("external-link"), href = "https://jlsumner.shinyapps.io/syllabustool/"), br(), br(),
-              a("Determine the Gender of a First Name", icon("external-link"), href = "https://genderize.io/"), br(), br(),
+              a("Gender Balance Assessment Tool", icon("external-link"), href = "https://jlsumner.shinyapps.io/syllabustool/",
+                target = "_blank"), br(), br(),
+              a("Determine the Gender of a First Name", icon("external-link"), href = "https://genderize.io/",
+                target = "_blank"), br(), br(),
               a("Open Syllabus Explorer: Mapping the College Curriculum across 1M+ Syllabi", icon("external-link"),
-                href = "http://explorer.opensyllabusproject.org/"), br(), br(),
-              a("Women Also Know Stuff", icon("external-link"), href = "http://womenalsoknowstuff.com/"))
+                href = "http://explorer.opensyllabusproject.org/", target = "_blank"), br(), br(),
+              a("Women Also Know Stuff", icon("external-link"), href = "http://womenalsoknowstuff.com/", target = "_blank"))
                      )))
  )
 )
