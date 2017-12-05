@@ -61,12 +61,12 @@ course$symx2 <- paste(course$xcor, ":0.65", sep = "")
 
 #Make data user-friendly
 
-course$Core <- ifelse(course$Core==1, "Core", "")
+course$Core <- ifelse(course$Core == 1, "Core", "")
 course <- course %>% 
 unite(Convener, Rank, Convener, sep = "/")
 course$Ratio <- format(round(course$Ratio, 2), nsmall = 2)
 course$WRatio <- format(round(course$WRatio, 2), nsmall = 2)
-course$Code <- paste0("IR",course$Code)
+#course$Code <- paste0("IR",course$Code)
 course$Level <- ifelse(course$Level == "Undergrad", "Undergraduate", course$Level)
 course$Readings <- course$Total
 
@@ -116,8 +116,7 @@ reds <- c(brewer.pal(9, "Reds"))
 test$topp <- ifelse(test$topp == 1, "TopPublisher", "OtherPublisher")
 test$Single <- ifelse(test$Single == 1,"SingleAuthored", "CoAuthored")
 test$female.cofemale <- ifelse(test$female.cofemale == 1, "FemaleCoAuthor",
-                               ifelse(test$female.cofemale == 0, "MaleCoAuthor","")
-)
+                               ifelse(test$female.cofemale == 0, "MaleCoAuthor",""))
 colnames(test)[c(3, 5)] <- c("Top", "Coauthor")
 test$Coauthor <- ifelse(test$Single == "SingleAuthored", "", test$Coauthor)
 
