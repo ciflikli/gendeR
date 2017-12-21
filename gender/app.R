@@ -38,14 +38,14 @@ body <- dashboardBody(includeCSS("styles.css"),
                      h3("Seeing the Big Picture"),
                      fluidRow(
                        column(width = 6,
-                              plotOutput("plot2", height = 400,
+                              plotOutput("plot1", height = 400,
                                          hover = hoverOpts(
-                                           id = "plot2_hover",
+                                           id = "plot1_hover",
                                            nullOutside = FALSE))),
                        column(width = 6,
                               conditionalPanel(
-                                condition = "input.plot2_hover != null",
-                                plotOutput("plot3", height = 400)))),
+                                condition = "input.plot1_hover != null",
+                                plotOutput("plot2", height = 400)))),
                      fluidRow(br(),
                        p("Since 1965, there is an ever increasing trend in the number of publications authored by
                          female scholars included in LSE IR reading lists. However, an increase in absolute numbers
@@ -65,9 +65,9 @@ body <- dashboardBody(includeCSS("styles.css"),
             fluidRow(sunburstOutput(outputId = "sb", height = 550)))))
             ),
     tabItem(tabName = "course",
-            fluidPage(fluidRow(column(12, wellPanel(style = "overflow-y:scroll; max-height: 600px; max-width: 1200px",
-             h2("Female Author Ratio Breakdown by Cluster", img(src = "key.png", height = 42, width = 250)),
-               rbokehOutput(outputId = "plot1", width = "210%")))),
+            fluidPage(fluidRow(column(12,
+             h2("Female Author Ratio Breakdown by Cluster"), #img(src = "key.png", height = 42, width = 250)),
+               rbokehOutput(outputId = "bokeh", width = "210%"))),
              fluidRow(column(2,
              h4("Course Icon"),
              br(),
@@ -141,7 +141,7 @@ body <- dashboardBody(includeCSS("styles.css"),
     tabItem(tabName = "ts",
             fluidPage(
              fluidRow(column(12,
-               h2("Yearly Author Gender Ratios"), br(),
+               h2("Publication-Year Author Gender Ratios"), br(),
                dygraphOutput(outputId = "ts")),
              fluidRow(column(12, br(),
                p("This interactive time series analogue of the introduction plot shows reading list breakdown based on gender.
@@ -366,7 +366,7 @@ server <- function(input, output) {
   output$female <- renderValueBox({
     valueBox(
       value = tags$p(sum(coData()$n[coData()$Female > 0]), style = "font-size: 80%;"),
-      subtitle = tags$p("Atleast one female author involved", style = "font-size: 85%;"),
+      subtitle = tags$p("At least one female author involved", style = "font-size: 85%;"),
       icon = tags$i(icon("venus")), color = "light-blue"
     )
   })
@@ -375,7 +375,7 @@ server <- function(input, output) {
   
   #First plot using static gender data
   
-  output$plot2 <- renderPlot({
+  output$plot1 <- renderPlot({
     q <- ggplot(gender[gender$Year > 1965 & gender$Year < 2017 & gender$Female == 1, ],
          aes(x = Year, fill = Gender)) +
          geom_histogram(binwidth = .5, alpha = 1, position = "identity", colour = "#db4c3f") +
@@ -389,7 +389,7 @@ server <- function(input, output) {
   
   #Hover plot using static gender data
   
-  output$plot3 <- renderPlot({
+  output$plot2 <- renderPlot({
     
     p <- ggplot(gender[gender$Year > 1965 & gender$Year < 2017, ], aes(x = Year, fill = Gender)) +
          geom_histogram(binwidth = 1, alpha = 1, position = "dodge", colour = "#0f4792") +
@@ -439,36 +439,40 @@ server <- function(input, output) {
   
   #Bokeh using static course data
   
-  output$plot1 <- renderRbokeh({
-    figure(title = "Anonymised LSE IR Courses 2015-2016",
-           tools = c("pan", "wheel_zoom", "reset", "hover"),
+  output$bokeh <- renderRbokeh({
+    figure(title = "F/M Author Ratios of Anonymised LSE IR Courses 2015-2016",
+           tools = c("pan", "wheel_zoom", "reset", "hover", "save"),
+           font = "Roboto Condensed",
            ylim = as.character(1:5),
            xlim = as.character(0:14), 
            xgrid = FALSE, ygrid = FALSE,
            xaxes = FALSE, yaxes = FALSE,
-           height = 600, width = 1800,
+           height = 400, width = 1050,
            h_symmetry = TRUE, v_symmetry = TRUE,
-           toolbar_location = "left") %>%
+           toolbar_location = "above") %>%
       #Create centered rectangles
       ly_crect(xcor, ycor, data = course, width = .95, height = .95,
                fill_color = color, line_color = "#252525", fill_alpha = .6,
                hover = list(Convener, Readings)) %>%
       #Course code
-      ly_text(symx, ycor, text = Ratio, data = course, 
+      ly_text(symx, ycor, text = Ratio, data = course,
+              font = "Roboto Condensed",
               font_style = "bold", font_size = "14pt",
               align = "left", baseline = "middle") %>%
       #Core course indicator
-      ly_text(symx2, numbery, text = Core, data = course,
+      ly_text(symx2, numbery, text = Core, data = course, font = "Roboto Condensed",
               font_style = "bold", font_size = "6pt", align = "left", baseline = "middle") %>%
       #Cluster name
       #ly_text(symx, namey, text = Cluster, data = course,
       #        font_size = "6pt", align = "left", baseline = "middle") %>%
       #Course level
-      ly_text(symx, massy, text = Level, data = course,
-              font_size = "6pt", align = "left", baseline = "middle") #%>%
+      ly_text(symx, massy, text = Level, data = course, font = "Roboto Condensed",
+              font_size = "6pt", align = "left", baseline = "middle") %>%
       #F/M ratio
       #ly_text(symx, numbery, text = Ratio, data = course,
       #        font_size = "8pt", align = "left", baseline = "middle")
+      theme_title(text_font = "Roboto Condensed", background_fill_color = "#ecf0f5") %>%
+      theme_plot(background_fill_color = "#ecf0f5", border_fill_color = "#ecf0f5", outline_line_alpha = 0)
   })
   
   #Logit using reactive plotData()

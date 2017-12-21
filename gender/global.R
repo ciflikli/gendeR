@@ -11,6 +11,8 @@ library(rbokeh)
 library(stringr)
 library(shinyjs)
 library(bubbles)
+library(silgelib)
+theme_set(theme_roboto())
 
 
 ######Read-in data
@@ -68,7 +70,7 @@ course$Ratio <- format(round(course$Ratio, 2), nsmall = 2)
 course$WRatio <- format(round(course$WRatio, 2), nsmall = 2)
 #course$Code <- paste0("IR",course$Code)
 course$Level <- ifelse(course$Level == "Undergrad", "Undergraduate", course$Level)
-course$Readings <- course$Total
+colnames(course)[1] <- "Readings"
 
 ######Create data for DT
 
