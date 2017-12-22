@@ -4,12 +4,12 @@ source("global.R", local = TRUE)
 
 sidebar <- dashboardSidebar(
   sidebarMenu(
-    menuItem("Introduction", icon = icon("play-circle"),  tabName = "intro"),
+    menuItem("Introduction", icon = icon("bar-chart"),  tabName = "intro"),
     menuItem("Time Series", icon = icon("area-chart"), tabName = "ts"
     ),
-    menuItem("Analysis", icon = icon("superscript"), startExpanded = TRUE, tabName = "charts",
-             menuSubItem("Female Inclusion", icon = icon("pie-chart"), tabName = "female"),
-             menuSubItem("Course Breakdown", icon = icon("table"), tabName = "course"),
+    menuItem("Analysis", icon = icon("sliders"), startExpanded = TRUE, tabName = "charts",
+             menuSubItem("Publication Pathways", icon = icon("pie-chart"), tabName = "female"),
+             menuSubItem("Course Breakdown", icon = icon("tasks"), tabName = "course"),
              menuSubItem("Logistic Regression", icon = icon("console", lib = "glyphicon"), tabName = "logit"),
              menuSubItem("Co-Authorship", icon = icon("users"), tabName = "coauthor")
     ),
@@ -19,8 +19,8 @@ sidebar <- dashboardSidebar(
     ),
     menuItem("About the Project", icon = icon("user-circle"), tabName = "project"
     ),
-    menuItem("Source code", icon = icon("github"), newtab = TRUE, #badgeLabel = "pending", badgeColor = "red"
-             href = "https://github.com/ciflikli//gender/"
+    menuItem("Source code", icon = icon("github"), newtab = TRUE,
+             href = "https://github.com/ciflikli/gendeR/tree/master/gender"
     ),
     menuItem("g.ciflikli@lse.ac.uk", icon = icon("envelope"),
              href = "mailto:g.ciflikli@lse.ac.uk?subject=LSE IR Gender App")
@@ -29,27 +29,27 @@ sidebar <- dashboardSidebar(
 
 #####Body#####
 
-body <- dashboardBody(includeCSS("styles.css"),
+body <- dashboardBody(tags$head(includeCSS("www/styles.css"),
+                        tags$style("@import url('//fonts.googleapis.com/css?family=Roboto+Condensed');")),
   tabItems(
     tabItem(tabName = "intro",
             h2("Time = Progress?"),
             fluidRow(
-              column(width = 12, class = "well",
+              column(width = 12,
                      h3("Seeing the Big Picture"),
                      fluidRow(
                        column(width = 6,
                               plotOutput("plot1", height = 400,
                                          hover = hoverOpts(
-                                           id = "plot1_hover",
-                                           nullOutside = FALSE))),
+                                         id = "plot1_hover",
+                                         nullOutside = FALSE))),
                        column(width = 6,
                               conditionalPanel(
                                 condition = "input.plot1_hover != null",
                                 plotOutput("plot2", height = 400)))),
                      fluidRow(br(),
                        p("Since 1965, there is an ever increasing trend in the number of publications authored by
-                         female scholars included in LSE IR reading lists. However, an increase in absolute numbers
-                         does not necessitate relative improvement: hover/click on the left plot to reveal the actual trend*.                               Instead, we see the", a("Pareto (80/20) principle at work:",
+                         female scholars included in LSE International Relations Department reading lists. However, an increase in                          absolute numbers does not necessitate relative improvement: hover/click on the left plot to reveal the                             actual trend*. Instead, we see the", a("Pareto (80/20) principle at work:",
                          href = "https://en.wikipedia.org/wiki/Pareto_principle", target = "_blank"),
                          "The rich get richer, and no real progress is made.", align = "justify")
                      )
@@ -58,35 +58,23 @@ body <- dashboardBody(includeCSS("styles.css"),
             ),
     tabItem(tabName = "female",
             fluidPage(fluidRow(column(12,
-            h2("Pathways to Female Author Inclusion"),
-            p("Hover on the dial starting from the innermost circle to find out reading list inclusion trends based
+            h2("Publication Pathways"),
+            p("Hover on the dial starting from the innermost circle to find out reading list female authorship trends based
               on the sequence:", br(),
               "Decade > Article/Book > Top/Other Publisher > Single/Co-Authored > Female/Male Co-Author"),
             fluidRow(sunburstOutput(outputId = "sb", height = 550)))))
             ),
     tabItem(tabName = "course",
             fluidPage(fluidRow(column(12,
-             h2("Female Author Ratio Breakdown by Cluster"), #img(src = "key.png", height = 42, width = 250)),
                rbokehOutput(outputId = "bokeh", width = "210%"))),
-             fluidRow(column(2,
-             h4("Course Icon"),
-             br(),
-               img(src = "avatar.png", height = 83, width = 100)),
-                      column(5, h4("Legend"),
+             fluidRow(column(4, br(), h4("Legend"),
                              h5("Core: LSE core course indicator"),
                              h5("Ratio: Reading List Female Author Ratio"),
-                             #h5("Cluster: Theory, Security/Statecraft, IO/Law, IPE, Regional"),
-                             h5("Level: Undergraduate, Masters, PhD"),
+                             h5("Level: Undergraduate, Masters, PhD")),
+                      column(4, br(), h4("Info"),
                              h5("Hover over course boxes for additional information on:"),
-                             h5("Convener rank, gender, and the total number of readings.")
-                                 ),
-                      column(5, h4("Overall F/M Ratio 0.204"), #, img(src = "legend.png", height = 83, width = 326)
-                             h5("IO/Law: 0.291 (7 Courses)"),
-                             h5("Theory: 0.225 (9 Courses)"),
-                             h5("IPE: 0.216 (12 Courses)"),
-                             h5("Regional: 0.156 (7 Courses)"),
-                             h5("Security/Statecraft: 0.129 (8 Courses)")
-                    ))
+                             h5("Convener rank, gender, and the total number of readings."))
+                      )
              )),
     tabItem(tabName = "logit",
             fluidPage(fluidRow(
@@ -245,11 +233,17 @@ body <- dashboardBody(includeCSS("styles.css"),
 
 #####UI#####
 
-ui <- dashboardPage(skin = "red",
-      dashboardHeader(title = "LSE IR Gender Project"),
+ui <- dashboardPage(skin = "red", 
+      dashboardHeader(title = "LSE IR Gender Project", titleWidth = "250px"),
       dashboardSidebar(sidebar, width = "250px"),
-      #HTML changes: reduce valuebox height; hover over sidebar icon does not highlight; get rid of whitespace between sidebar and body
+      #HTML changes: custom font; reduce valuebox height; hover over sidebar icon does not highlight;
+      #get rid of whitespace between sidebar and body; make dygraph legend bg transparent
       dashboardBody(body, useShinyjs(), tags$head({tags$style(HTML("
+                                                   .main-header .logo {
+                                                   font-family: 'Roboto Condensed', sans-serif;
+                                                   font-weight: normal;
+                                                   font-size: 24px;
+                                                   }
                                                   .small-box {height: 70px}
                                                   .skin-red .main-header .logo {
                                                    background-color: #db4c3f;
@@ -301,7 +295,8 @@ ui <- dashboardPage(skin = "red",
                                                    -o-transform: translate(-250px, 0);
                                                    transform: translate(-250px, 0);
                                                    }
-                                                   }"))}))
+                                                   }
+                                                   .dygraph-legend {background: transparent !important;}"))}))
       )
 
 #####Server#####
@@ -376,13 +371,17 @@ server <- function(input, output) {
   #First plot using static gender data
   
   output$plot1 <- renderPlot({
+    
     q <- ggplot(gender[gender$Year > 1965 & gender$Year < 2017 & gender$Female == 1, ],
          aes(x = Year, fill = Gender)) +
          geom_histogram(binwidth = .5, alpha = 1, position = "identity", colour = "#db4c3f") +
          scale_x_continuous(name = "Date of Publication") +
          scale_y_continuous(name = "Times Included in Reading List") +
          labs(title = "Number of Publications included in LSE IR Reading Lists",
-              subtitle = "Female Authors Subset")
+              subtitle = "Female Authors Subset") +
+         theme(plot.background = element_rect(fill = "#ecf0f5", linetype = "blank"),
+               panel.grid = element_line(), legend.position = c(.1, .9))
+
     q
     
   })
@@ -395,8 +394,9 @@ server <- function(input, output) {
          geom_histogram(binwidth = 1, alpha = 1, position = "dodge", colour = "#0f4792") +
          scale_x_continuous(name = "Date of Publication") +
          scale_y_continuous(name = "Times Included in Reading List") +
-         labs(title = "Number of Publications included in LSE IR Reading Lists",
-              subtitle = "Both Genders")
+         labs(title = " ", subtitle = "Both Genders") +
+         theme(plot.background = element_rect(fill = "#ecf0f5", linetype = "blank"),
+               panel.grid = element_line(), legend.position = c(.1, .9))
     p
     
   })
@@ -406,10 +406,10 @@ server <- function(input, output) {
   output$ts <- renderDygraph({
     
     dygraph(data = authors) %>%
-      dyOptions(fillGraph = TRUE, fillAlpha = 0.1, panEdgeFraction = 0.1) %>%
+      dyOptions(fillGraph = TRUE, fillAlpha = 0.1, panEdgeFraction = 0.1, stepPlot = TRUE) %>%
       dyLimit(.2, color = "black") %>%
       dyLegend(width = 400, hideOnMouseOut = FALSE) %>%
-      dyAxis("y", label = "Percentage of All Readings",valueRange = c(0, 1.001)) %>%
+      dyAxis("y", label = "Percentage of All Readings", valueRange = c(.01, 1.001)) %>%
       dyAxis("x", label = "Date of Publication") %>%
       dySeries("V2", label = "Female Author Ratio", color = "#db4c3f") %>%
       dySeries("V3", label = "Male Author Ratio", color = "#0f4792")
@@ -440,21 +440,28 @@ server <- function(input, output) {
   #Bokeh using static course data
   
   output$bokeh <- renderRbokeh({
-    figure(title = "F/M Author Ratios of Anonymised LSE IR Courses 2015-2016",
+    figure(title = "F/M Author Ratio   |   43 Anonymised LSE IR Courses Taught in 2015-2016   |   Overall Ratio .204%",
            tools = c("pan", "wheel_zoom", "reset", "hover", "save"),
            font = "Roboto Condensed",
-           ylim = as.character(1:5),
+           ylim = as.character(1:6),
            xlim = as.character(0:14), 
            xgrid = FALSE, ygrid = FALSE,
            xaxes = FALSE, yaxes = FALSE,
            height = 400, width = 1050,
            h_symmetry = TRUE, v_symmetry = TRUE,
-           toolbar_location = "above") %>%
+           toolbar_location = "right") %>%
+      #Create cluster boxes as indicators
+      ly_crect(xcor, ycor, data = indicator, width = 2.95, height = .95,
+               fill_color = colors, line_color = "#252525", fill_alpha = .6) %>%
+      ly_text(symx, ycor, text = clusters, data = indicator,
+              font = "Roboto Condensed",
+              font_style = "normal", font_size = "14pt",
+              align = "center", baseline = "middle") %>%
       #Create centered rectangles
       ly_crect(xcor, ycor, data = course, width = .95, height = .95,
                fill_color = color, line_color = "#252525", fill_alpha = .6,
                hover = list(Convener, Readings)) %>%
-      #Course code
+      #F/M ratio
       ly_text(symx, ycor, text = Ratio, data = course,
               font = "Roboto Condensed",
               font_style = "bold", font_size = "14pt",
@@ -462,16 +469,11 @@ server <- function(input, output) {
       #Core course indicator
       ly_text(symx2, numbery, text = Core, data = course, font = "Roboto Condensed",
               font_style = "bold", font_size = "6pt", align = "left", baseline = "middle") %>%
-      #Cluster name
-      #ly_text(symx, namey, text = Cluster, data = course,
-      #        font_size = "6pt", align = "left", baseline = "middle") %>%
       #Course level
       ly_text(symx, massy, text = Level, data = course, font = "Roboto Condensed",
               font_size = "6pt", align = "left", baseline = "middle") %>%
-      #F/M ratio
-      #ly_text(symx, numbery, text = Ratio, data = course,
-      #        font_size = "8pt", align = "left", baseline = "middle")
-      theme_title(text_font = "Roboto Condensed", background_fill_color = "#ecf0f5") %>%
+      theme_title(text_font = "Roboto Condensed", text_font_size = "16pt",
+                  background_fill_color = "#ecf0f5", text_font_style = "normal") %>%
       theme_plot(background_fill_color = "#ecf0f5", border_fill_color = "#ecf0f5", outline_line_alpha = 0)
   })
   
@@ -481,7 +483,9 @@ server <- function(input, output) {
     r <- ggplot(plotData(), aes(x = Year, y = Avg2)) + geom_point() +
          stat_smooth(method = "glm", method.args = list(family = "binomial"), se = TRUE) +
          scale_y_continuous(name = "Selected Female Author Ratio Hit/Missed", labels = c("Miss", "Hit"), breaks = c(0, 1)) +
-         scale_x_continuous(name = "Date of Publication")
+         scale_x_continuous(name = "Date of Publication") +
+         theme(plot.background = element_rect(fill = "#ecf0f5", linetype = "blank"),
+               panel.grid = element_line())
     r
   })
   
@@ -490,7 +494,8 @@ server <- function(input, output) {
   output$bubbles <- renderBubbles({
     if (nrow(coData()) == 0)
       return()
-    bubbles(sqrt(coData()$n), coData()$AutGen, key = coData()$AutGen, tooltip = coData()$n, color = "#222d32", textColor = "white")
+    bubbles(sqrt(coData()$n), coData()$AutGen, key = coData()$AutGen,
+            tooltip = coData()$n, color = "#222d32", textColor = "white")
   })
   
   #DT using reactive selectedData()

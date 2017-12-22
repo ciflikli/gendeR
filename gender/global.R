@@ -11,9 +11,18 @@ library(rbokeh)
 library(stringr)
 library(shinyjs)
 library(bubbles)
-library(silgelib)
-theme_set(theme_roboto())
+library(showtext)
+library(hrbrthemes)
+theme_set(theme_ipsum_rc(plot_title_size = 16, base_family = "Roboto Condensed", axis_title_size = 12))
 
+font_add_google(name = "Roboto Condensed", family = "Roboto Condensed", regular.wt = 400, bold.wt = 700)
+showtext_auto()
+
+if (Sys.info()[["sysname"]] == "Linux") {
+dir.create('~/.fonts') 
+download.file("https://fonts.googleapis.com/css?family=Roboto+Condensed", "~/.fonts")
+system("fc-cache -f ~/.fonts") 
+}
 
 ######Read-in data
 
@@ -49,9 +58,18 @@ course$ycor <- as.character(course$ycor)
 
 #Match colours with clusters
 
-clusters <- c("Theory", "Security/Statecraft", "IO/Law", "IPE", "Regional")
+clusters <- c("Theory", "Security", "IO/Law", "IPE", "Regional")
 colors <- c("#f0f9e8", "#bae4bc", "#7bccc4", "#43a2ca", "#0868ac")
 course$color <- colors[match(course$Cluster, clusters)]
+
+#New dataframe for cluster boxes
+indicator <- data_frame(clusters, colors)
+indicator$xcor <- as.character(c(10, 1, 13, 7, 4 ))
+indicator$ycor <- as.character(rep(6, 5))
+
+indicator$symx <- paste(indicator$xcor, ":0.5", sep = "")
+indicator$namey <- paste(indicator$ycor, ":0", sep = "")
+indicator$clusters <- paste(indicator$clusters, paste0(c(.225 , .129, .291, .216, .156), "%"), sep = " ")
 
 #Create coordinates for additional info within the rectangles
 
@@ -68,7 +86,6 @@ course <- course %>%
 unite(Convener, Rank, Convener, sep = "/")
 course$Ratio <- format(round(course$Ratio, 2), nsmall = 2)
 course$WRatio <- format(round(course$WRatio, 2), nsmall = 2)
-#course$Code <- paste0("IR",course$Code)
 course$Level <- ifelse(course$Level == "Undergrad", "Undergraduate", course$Level)
 colnames(course)[1] <- "Readings"
 

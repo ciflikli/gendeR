@@ -1,10 +1,13 @@
 name: gender
 title: gender
+username:
 account: gokhan
 server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
 appId: 188187
-bundleId: 868710
+bundleId: 1147436
 url: https://gokhan.shinyapps.io/gender/
-when: 1497549524.67255
+when: 1513929732.9385
 asMultiple: FALSE
 asStatic: FALSE
+ignoredFiles: .fonts|RobotoCondensed-Bold.ttf|RobotoCondensed-Regular.ttf
