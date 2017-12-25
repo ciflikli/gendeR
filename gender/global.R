@@ -1,5 +1,4 @@
 ######Load required libraries
-
 library(shinydashboard)
 library(dygraphs)
 library(sunburstR)
@@ -17,12 +16,13 @@ theme_set(theme_ipsum_rc(plot_title_size = 18, axis_title_size = 14))
 
 font_add_google(name = "Roboto Condensed", family = "Roboto Condensed", regular.wt = 400, bold.wt = 700)
 showtext_auto()
+showtext_opts(dpi = 112)
 
-if (Sys.info()[["sysname"]] == "Linux") {
-dir.create('~/.fonts') 
-download.file("https://fonts.googleapis.com/css?family=Roboto+Condensed", "~/.fonts")
-system("fc-cache -f ~/.fonts") 
-}
+#if (Sys.info()[["sysname"]] == "Linux") {
+#dir.create('~/.fonts') 
+#download.file("https://fonts.googleapis.com/css?family=Roboto+Condensed", "~/.fonts")
+#system("fc-cache -f ~/.fonts") 
+#}
 
 ######Read-in data
 
