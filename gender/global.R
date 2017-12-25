@@ -13,7 +13,7 @@ library(shinyjs)
 library(bubbles)
 library(showtext)
 library(hrbrthemes)
-theme_set(theme_ipsum_rc(plot_title_size = 16, base_family = "Roboto Condensed", axis_title_size = 12))
+theme_set(theme_ipsum_rc(plot_title_size = 18, axis_title_size = 14))
 
 font_add_google(name = "Roboto Condensed", family = "Roboto Condensed", regular.wt = 400, bold.wt = 700)
 showtext_auto()

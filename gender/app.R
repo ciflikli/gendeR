@@ -67,11 +67,11 @@ body <- dashboardBody(tags$head(includeCSS("www/styles.css"),
     tabItem(tabName = "course",
             fluidPage(fluidRow(column(12,
                rbokehOutput(outputId = "bokeh", width = "210%"))),
-             fluidRow(column(4, br(), h4("Legend"),
+             fluidRow(column(4, br(), br(), h4("Legend"),
                              h5("Core: LSE core course indicator"),
                              h5("Ratio: Reading List Female Author Ratio"),
                              h5("Level: Undergraduate, Masters, PhD")),
-                      column(4, br(), h4("Info"),
+                      column(4, br(), br(), h4("Info"),
                              h5("Hover over course boxes for additional information on:"),
                              h5("Convener rank, gender, and the total number of readings."))
                       )
