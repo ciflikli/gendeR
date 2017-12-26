@@ -12,7 +12,7 @@ R packages utilised: ```shinydashboard, shinyjs, dygraphs, sunburstR, DT, htmlwi
 
 * The first plot displays the raw count of publications by female authors included in a reading list by publication year:
 
-![](/img/plot.png)
+![](/img/plot1.png)
 
 Within this dataset, we see that works by female authors are more likely to be included as time passes. This is hardly surprising, as prior to 1960's academic authorship was more or less exclusively a male enterprise. However, when plotted side by side with male authors, we find that the trend is universal:
 
