@@ -2,11 +2,17 @@
 
 LSE IR Gender Project
 
-https://gokhan.shinyapps.io/gender/
-
-Exploratory analysis of ~13,000 scholarly works included in International Relations (IR) Department syllabi in 2016-2017 at the London School of Economics and Political Science. The main aim of this project is to quantify the publication bias in academia. The findings mirror the US Ivy League patterns of a roughly 80/20 male-to-female author ratio.
+Exploratory analysis of ~13,000 scholarly works included in International Relations (IR) Department syllabi in 2015-2016 at the London School of Economics and Political Science. The main aim of this project is to quantify the publication bias in academia. The findings mirror the US Ivy League patterns of a roughly 80/20 male-to-female author ratio.
 
 R packages utilised: ```shinydashboard, shinyjs, dygraphs, sunburstR, DT, htmlwidgets, RColorBrewer, bubbles, rbokeh.```
+
+You can access the live app at https://gokhan.shinyapps.io/gender/
+
+Alternatively, you can fork it on GitHub (preferred) or download a local copy:
+
+    shiny::runGitHub(username = "ciflikli", repo = "gendeR", subdir = "gender")
+
+Running the above code as it is will remove the files once the app is closed. You can pass an additional ```destdir =``` argument to save the contents locally in a more persistent manner. Make sure you have the required libraries installed; the list can be found at the beginning of global.R script in the app folder.
 
 # Introduction
 
