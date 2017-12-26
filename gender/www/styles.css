@@ -36,6 +36,10 @@ i {
   font-size: 50%;
 }
 
+.small-box .icon-large {
+    color: rgb(236, 240, 245) !important;
+}
+
 .dygraph-legend {
   font-size: 12px !important;
   font-weight: 300 !important;

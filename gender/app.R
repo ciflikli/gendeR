@@ -20,10 +20,8 @@ sidebar <- dashboardSidebar(
     menuItem("About the Project", icon = icon("user-circle"), tabName = "project"
     ),
     menuItem("Source code", icon = icon("github"), newtab = TRUE,
-             href = "https://github.com/ciflikli/gendeR/tree/master/gender"
-    ),
-    menuItem("g.ciflikli@lse.ac.uk", icon = icon("envelope"),
-             href = "mailto:g.ciflikli@lse.ac.uk?subject=LSE IR Gender App")
+             href = "https://github.com/ciflikli/gendeR/"
+    )
   )
 )
 
@@ -86,7 +84,7 @@ body <- dashboardBody(tags$head(includeCSS("www/styles.css"),
                                 in a calendar year and 1 (hit) otherwise.
                                 The second slider selects the starting year for the data. For example, the default settings produce                                 a logistic link function showing which years had at least",
                                 span("20%", style = "color:#468cc8"), "female authors since ",
-                                span("1960.", style = "color:#468cc8"),
+                                span("1960", style = "color:#468cc8"), "with a 95% confidence interval.",
                                 align = "justify")),
               fluidRow(column(4,
                      sliderInput("glmratio", "Select Female Author Percentage:", step = 1, min = 0, max = 40, value = 20)),
@@ -485,7 +483,8 @@ server <- function(input, output) {
   
   output$glmplot <- renderPlot({
     r <- ggplot(plotData(), aes(x = Year, y = Avg2)) + geom_point() +
-         stat_smooth(method = "glm", method.args = list(family = "binomial"), se = TRUE) +
+         stat_smooth(method = "glm", method.args = list(family = "binomial"), se = TRUE,
+                     color = "#428bca", fill = "#428bca", alpha = .1) +
          scale_y_continuous(name = "Selected Female Author Ratio Hit/Missed", labels = c("Miss", "Hit"), breaks = c(0, 1)) +
          scale_x_continuous(name = "Date of Publication") +
          theme(plot.background = element_rect(fill = "#ecf0f5", linetype = "blank"),
