@@ -375,7 +375,8 @@ server <- function(input, output) {
     
     q <- ggplot(gender[gender$Year > 1965 & gender$Year < 2017 & gender$Female == 1, ],
          aes(x = Year, fill = Gender)) +
-         geom_histogram(binwidth = .5, alpha = 1, position = "identity", colour = "#db4c3f") +
+         geom_histogram(binwidth = .5, alpha = 1, position = "identity", colour = "#232d33") +
+         scale_fill_manual(values = "#1fbfc3") +
          scale_x_continuous(name = "Date of Publication") +
          scale_y_continuous(name = "Times Included in Reading List") +
          labs(title = "Number of Publications included in LSE IR Reading Lists",
@@ -392,7 +393,8 @@ server <- function(input, output) {
   output$plot2 <- renderPlot({
     
     p <- ggplot(gender[gender$Year > 1965 & gender$Year < 2017, ], aes(x = Year, fill = Gender)) +
-         geom_histogram(binwidth = 1, alpha = 1, position = "dodge", colour = "#0f4792") +
+         geom_histogram(binwidth = 1, alpha = .9, position = "dodge", colour = "#232d33") +
+         scale_fill_manual(values = c("#1fbfc3", "#f5766f")) +
          scale_x_continuous(name = "Date of Publication") +
          scale_y_continuous(name = "Times Included in Reading List") +
          labs(title = " ", subtitle = "Both Genders") +
@@ -407,13 +409,14 @@ server <- function(input, output) {
   output$ts <- renderDygraph({
     
     dygraph(data = authors) %>%
-      dyOptions(fillGraph = TRUE, fillAlpha = 0.1, panEdgeFraction = 0.1, stepPlot = TRUE) %>%
+      dyOptions(fillGraph = TRUE, fillAlpha = 0.1, panEdgeFraction = 0.1, drawPoints = TRUE,
+                strokeWidth = 1.2, drawGapEdgePoints = TRUE, drawGrid = FALSE, mobileDisableYTouch = TRUE) %>%
       dyLimit(.2, color = "black") %>%
       dyLegend(width = 400, hideOnMouseOut = FALSE) %>%
-      dyAxis("y", label = "Percentage of All Readings", valueRange = c(.01, 1.001)) %>%
+      dyAxis("y", label = "Percentage of All Readings", valueRange = c(.01, 1.005), rangePad = 1) %>%
       dyAxis("x", label = "Date of Publication") %>%
-      dySeries("V2", label = "Female Author Ratio", color = "#db4c3f") %>%
-      dySeries("V3", label = "Male Author Ratio", color = "#0f4792")
+      dySeries("V2", label = "Female Author Ratio", color = "#1fbfc3", stepPlot = TRUE) %>%
+      dySeries("V3", label = "Male Author Ratio", color = "#f5766f", fillGraph = TRUE, pointSize = 2)
   })
   
   #Sunburst using static patch data (code at the end makes sure the legend is on by default; use with htmlwidgets)

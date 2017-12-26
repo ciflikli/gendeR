@@ -35,3 +35,8 @@ a {
 i {
   font-size: 50%;
 }
+
+.dygraph-legend {
+  font-size: 12px !important;
+  font-weight: 300 !important;
+}
