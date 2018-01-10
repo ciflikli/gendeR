@@ -71,6 +71,10 @@ indicator$symx <- paste(indicator$xcor, ":0.5", sep = "")
 indicator$namey <- paste(indicator$ycor, ":0", sep = "")
 indicator$clusters <- paste(indicator$clusters, paste0(c(.225 , .129, .291, .216, .156), "%"), sep = " ")
 
+indicator$Subfield <- c("IR Theory", "Statecraft/Security Studies", "International Organisations/Law",
+                         "International Political Economy", "Area Studies")
+indicator$Courses <- c(9, 8, 7, 12, 7)
+
 #Create coordinates for additional info within the rectangles
 
 course$symx <- paste(course$xcor, ":0.1", sep = "")

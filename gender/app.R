@@ -64,6 +64,7 @@ body <- dashboardBody(tags$head(includeCSS("www/styles.css"),
             ),
     tabItem(tabName = "course",
             fluidPage(fluidRow(column(12,
+                                      h2("IR Subfields and Course Breakdown"), br(),
                rbokehOutput(outputId = "bokeh", width = "210%"))),
              fluidRow(column(4, br(), br(), h4("Legend"),
                              h5("Core: LSE core course indicator"),
@@ -414,7 +415,7 @@ server <- function(input, output) {
       dyAxis("y", label = "Percentage of All Readings", valueRange = c(.01, 1.005), rangePad = 1) %>%
       dyAxis("x", label = "Date of Publication") %>%
       dySeries("V2", label = "Female Author Ratio", color = "#1fbfc3", stepPlot = TRUE) %>%
-      dySeries("V3", label = "Male Author Ratio", color = "#f5766f", fillGraph = TRUE, pointSize = 2)
+      dySeries("V3", label = "Male Author Ratio", color = "#f5766f", stepPlot = TRUE, fillGraph = TRUE)
   })
   
   #Sunburst using static patch data (code at the end makes sure the legend is on by default; use with htmlwidgets)
@@ -442,7 +443,7 @@ server <- function(input, output) {
   #Bokeh using static course data
   
   output$bokeh <- renderRbokeh({
-    figure(title = "F/M Author Ratio   |   43 Anonymised LSE IR Courses Taught in 2015-2016   |   Overall Ratio .204%",
+    figure(title = "",
            tools = c("pan", "wheel_zoom", "reset", "hover", "save"),
            font = "Roboto Condensed",
            ylim = as.character(1:6),
@@ -454,7 +455,8 @@ server <- function(input, output) {
            toolbar_location = "right") %>%
       #Create cluster boxes as indicators
       ly_crect(xcor, ycor, data = indicator, width = 2.95, height = .95,
-               fill_color = colors, line_color = "#252525", fill_alpha = .6) %>%
+               fill_color = colors, line_color = "#252525", fill_alpha = .6,
+               hover = list(Subfield, Courses)) %>%
       ly_text(symx, ycor, text = clusters, data = indicator,
               font = "Roboto Condensed",
               font_style = "normal", font_size = "14pt",
