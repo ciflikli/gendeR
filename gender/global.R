@@ -85,7 +85,7 @@ course$symx2 <- paste(course$xcor, ":0.65", sep = "")
 
 #Make data user-friendly
 
-course$Core <- ifelse(course$Core == 1, "Core", "")
+#course$Core <- ifelse(course$Core == 1, "Core", "")
 course <- course %>% 
 unite(Convener, Rank, Convener, sep = "/")
 course$Ratio <- format(round(course$Ratio, 2), nsmall = 2)

@@ -5,9 +5,9 @@ account: gokhan
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 188187
-bundleId: 1150895
+bundleId: 1170126
 url: https://gokhan.shinyapps.io/gender/
-when: 1514287296.16931
+when: 1515578790.2416
 asMultiple: FALSE
 asStatic: FALSE
 ignoredFiles: .fonts|RobotoCondensed-Bold.ttf|RobotoCondensed-Regular.ttf|www/RobotoCondensed-Bold.ttf|www/RobotoCondensed-Regular.ttf

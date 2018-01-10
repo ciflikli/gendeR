@@ -67,7 +67,7 @@ body <- dashboardBody(tags$head(includeCSS("www/styles.css"),
                                       h2("IR Subfields and Course Breakdown"), br(),
                rbokehOutput(outputId = "bokeh", width = "210%"))),
              fluidRow(column(4, br(), br(), h4("Legend"),
-                             h5("Core: LSE core course indicator"),
+                             #h5("Core: LSE core course indicator"),
                              h5("Ratio: Reading List Female Author Ratio"),
                              h5("Level: Undergraduate, Masters, PhD")),
                       column(4, br(), br(), h4("Info"),
@@ -471,8 +471,8 @@ server <- function(input, output) {
               font_style = "bold", font_size = "14pt",
               align = "left", baseline = "middle") %>%
       #Core course indicator
-      ly_text(symx2, numbery, text = Core, data = course, font = "Roboto Condensed",
-              font_style = "bold", font_size = "6pt", align = "left", baseline = "middle") %>%
+      #ly_text(symx2, numbery, text = Core, data = course, font = "Roboto Condensed",
+      #        font_style = "bold", font_size = "6pt", align = "left", baseline = "middle") %>%
       #Course level
       ly_text(symx, massy, text = Level, data = course, font = "Roboto Condensed",
               font_size = "6pt", align = "left", baseline = "middle") %>%
