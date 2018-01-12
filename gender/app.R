@@ -162,7 +162,7 @@ body <- dashboardBody(tags$head(includeCSS("www/styles.css"),
        "data containing syllabi for each undergraduate,
        master's and PhD level IR course on offer at the LSE in the 2015-16 academic year. A total of 43
        courses (18 Undergraduate-level, 23 Master's-level, and 2 PhD-level)
-       render 12,354 non-unique (2,570 by female authors) textual sources listed as both essential and background reading material.
+       render 12,358 non-unique (2,574 by female authors) textual sources listed as both essential and background reading material.
        The analysis focuses on books and articles published between 1960 and 2015. Finally, 
        in order to tackle the gender bias issue as it relates to authorship in academia,
        sex of the author(s) are coded M/F*. In case of multiple authors, the binary coding indicates
