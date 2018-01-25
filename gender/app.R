@@ -8,10 +8,10 @@ sidebar <- dashboardSidebar(
     menuItem("Time Series", icon = icon("area-chart"), tabName = "ts"
     ),
     menuItem("Analysis", icon = icon("sliders"), startExpanded = TRUE, tabName = "charts",
-             menuSubItem("Publication Pathways", icon = icon("pie-chart"), tabName = "female"),
              menuSubItem("Course Breakdown", icon = icon("tasks"), tabName = "course"),
-             menuSubItem("Logistic Regression", icon = icon("console", lib = "glyphicon"), tabName = "logit"),
-             menuSubItem("Co-Authorship", icon = icon("users"), tabName = "coauthor")
+             menuSubItem("Publication Pathways", icon = icon("pie-chart"), tabName = "female"),
+             menuSubItem("Co-Authorship", icon = icon("users"), tabName = "coauthor"),
+             menuSubItem("Logistic Regression", icon = icon("console", lib = "glyphicon"), tabName = "logit")
     ),
     menuItem("Publisher Data", icon = icon("book"), tabName = "data"
     ),
@@ -170,7 +170,7 @@ body <- dashboardBody(tags$head(includeCSS("www/styles.css"),
        on their spare time.", align = "justify"), br(),
        p("* We readily acknowledge the limitations of a binary gender indicator.")),
        column(2,
-              h2("Coders"),
+              h2("Syllabi Coders"),
               p("Sarah Bertrand"),
               p("Ilaria Carrozza"),
               p("Ida Danewid"),
