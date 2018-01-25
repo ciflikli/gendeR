@@ -30,29 +30,28 @@ Within this dataset, we see that works by female authors are more likely to be i
 
 ![](/img/ts.png)
 
-# Publication Pathways
-
-* In order to better understand the pathways leading to reading list inclusion, we create and plot sequences involving at least one female author. The sequences follow the order Decade > Article/Book > Top/Other Publisher > Single/Co-Authored > Female/Male Co-Author. The numbers inside the dial report the count and overall percentage of the current selection:
-
-![](/img/sunburst.png)
-
 # Course Breakdown
 
 * We visualise all 43 courses (18 Undergraduate-level, 23 Master's-level, and 2 PhD-level) included in the dataset. We cluster all courses under five overarching categories: Security/Statecraft Studies, Regional Studies, International Political Economy, Theory, and International Organisations/Law. Hovering over a course displays additional information such as course convener rank, gender, and the total number of publications from that course:
 
 ![](/img/bokeh.png)
 
-# Logistic Link
+# Publication Pathways
 
-* This graph calculates a logistic function based on selected parameters: female author percentage and starting year. The first setting sets the threshold for creating a dummy variable and the latter subsets the data. For example, the default settings display which publication-years since 1960 has at least 20% female authors:
+* In order to better understand the pathways leading to reading list inclusion, we create and plot sequences involving at least one female author. The sequences follow the order Decade > Article/Book > Top/Other Publisher > Single/Co-Authored > Female/Male Co-Author. The numbers inside the dial report the count and overall percentage of the current selection:
 
-![](/img/logit.png)
-
+![](/img/sunburst.png)
 # Co-Authorship
 
-* Finally, we visualise co-authorship patters using three parameters: maximum number of authors, maximum number of female authors, ad maximum number of male authors. The bubbles are recalculated each time a slider is updated and it can be animated. The radii are calculated using square root to offset the male single-author dominance:
+* Next, we visualise co-authorship patters using three parameters: maximum number of authors, maximum number of female authors, ad maximum number of male authors. The bubbles are recalculated each time a slider is updated and it can be animated. The radii are calculated using square root to offset the male single-author dominance:
 
 ![](/img/bubbles.png)
+
+# Logistic Link
+
+* Finally, this graph calculates a logistic function based on selected parameters: female author percentage and starting year. The first setting sets the threshold for creating a dummy variable and the latter subsets the data. For example, the default settings display which publication-years since 1960 has at least 20% female authors:
+
+![](/img/logit.png)
 
 # Publisher Info
 
