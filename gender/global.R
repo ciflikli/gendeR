@@ -18,16 +18,10 @@ font_add_google(name = "Roboto Condensed", family = "Roboto Condensed", regular.
 showtext_auto()
 showtext_opts(dpi = 112)
 
-#if (Sys.info()[["sysname"]] == "Linux") {
-#dir.create('~/.fonts') 
-#download.file("https://fonts.googleapis.com/css?family=Roboto+Condensed", "~/.fonts")
-#system("fc-cache -f ~/.fonts") 
-#}
-
 ######Read-in data
 
 total <- read_csv("total.csv")
-gender <- read_csv("gender_sb.csv")
+gender <- read_csv("gender_new.csv")
 pub <- read_csv("pub.csv")
 course <- read_csv("course.csv")
 
@@ -101,7 +95,7 @@ pub$Ratio <- round(pub$Female / pub$Total, 2)
 pub$Ratio <- ifelse(is.nan(pub$Ratio), 0, pub$Ratio)
 
 ######Prepare data for ggplot
-
+gender$AutGen <- ifelse(gender$AutGen == "VV", "FF", ifelse(gender$AutGen == "N", "M", gender$AutGen))
 gender$Gender <- ifelse(gender$Female == 1, "Female", "Male")
 gender$Female <- as.factor(gender$Female)
 gender$topp <- ifelse(gender$Top == 1 | gender$Top.Press == 1, 1, 0)

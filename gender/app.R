@@ -194,12 +194,15 @@ body <- dashboardBody(tags$head(includeCSS("www/styles.css"),
     tabItem(tabName = "project",
        fluidPage(column(6,
         h2("Project Details"), 
-        p("This data presentation is one component of a larger gender and diversity project that is run at the LSE International             Relations Department.
+        p("This data presentation is one component of a larger gender and diversity project that is run at the LSE International Relations Department.
           Currently, two working papers are being written:"), br(),
         p("For methodology, see", em("'How to Research Gender & Diversity in the IR Curriculum: A Convergent Mixed-Methods Approach'"),
-          "by Kiran Phull, Gokhan Ciflikli & Gustav Meibauer."), br(),
+          "by Kiran Phull, Gokhan Ciflikli & Gustav Meibauer.",
+          "Read LSE Impact", a("blog post.", 
+        href = "http://blogs.lse.ac.uk/impactofsocialsciences/2018/01/31/male-authors-outnumber-their-female-counterparts-on-international-relations-course-reading-lists-by-more-than-five-to-one/",
+        target = "_blank")), br(),
         p("For theory, see", em("'Is Your Syllabus Biased?: Analyzing Gender and Diversity in the IR Canon'"),
-          "by Dr. Joanne Yao and Andrew Delatolla. Read guest", a("blogpost.",
+          "by Dr. Joanne Yao and Andrew Delatolla. Read guest", a("blog post.",
           href = "https://thedisorderofthings.com/2017/04/20/gender-and-diversity-in-the-ir-curriculum-why-should-we-care/",
           target = "_blank")), br(),
         p("This Shiny app is built by", a("Gokhan Ciflikli", icon("external-link"),
@@ -222,11 +225,9 @@ body <- dashboardBody(tags$head(includeCSS("www/styles.css"),
               "PS: Political Science & Politics 28(3): 525–33.", br(), br(),
               a("Gender Balance Assessment Tool", icon("external-link"), href = "https://jlsumner.shinyapps.io/syllabustool/",
                 target = "_blank"), br(), br(),
-              a("Determine the Gender of a First Name", icon("external-link"), href = "https://genderize.io/",
-                target = "_blank"), br(), br(),
               a("Open Syllabus Explorer: Mapping the College Curriculum across 1M+ Syllabi", icon("external-link"),
                 href = "http://explorer.opensyllabusproject.org/", target = "_blank"), br(), br(),
-              a("Women Also Know Stuff", icon("external-link"), href = "http://womenalsoknowstuff.com/", target = "_blank"))
+              a("Women Also Know, IR Edition", icon("external-link"), href = "http://duckofminerva.com/2018/02/women-also-know-international-relations-edition.html", target = "_blank"))
                      )))
  )
 )
@@ -336,6 +337,7 @@ server <- function(input, output) {
   #Bubbles data
   
   coData <- reactive({
+    dat2 <- na.omit(dat2)
     dat2 <- dat2[dat2$Total >= input$max[1] & dat2$Total <= input$max[2] &
                  dat2$Male <= input$male & dat2$Female <= input$female, ]
   })
@@ -410,8 +412,8 @@ server <- function(input, output) {
     dygraph(data = authors) %>%
       dyOptions(fillGraph = TRUE, fillAlpha = 0.1, panEdgeFraction = 0.1, drawPoints = TRUE,
                 strokeWidth = 1.2, drawGapEdgePoints = TRUE, drawGrid = FALSE, mobileDisableYTouch = TRUE) %>%
-      dyLimit(.2, color = "black") %>%
-      dyLegend(width = 400, hideOnMouseOut = FALSE) %>%
+      dyLimit(.26, color = "black") %>%
+      dyLegend(width = 400, hideOnMouseOut = TRUE) %>%
       dyAxis("y", label = "Percentage of All Readings", valueRange = c(.01, 1.005), rangePad = 1) %>%
       dyAxis("x", label = "Date of Publication") %>%
       dySeries("V2", label = "Female Author Ratio", color = "#1fbfc3", stepPlot = TRUE) %>%
