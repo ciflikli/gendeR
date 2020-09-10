@@ -21,7 +21,7 @@ showtext_opts(dpi = 112)
 ######Read-in data
 
 total <- read_csv("total.csv")
-gender <- read_csv("gender_new.csv")
+gender <- read_csv("gender_sb.csv")
 pub <- read_csv("pub.csv")
 course <- read_csv("course.csv")
 
